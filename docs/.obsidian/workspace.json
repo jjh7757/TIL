@@ -1,0 +1,217 @@
+{
+  "main": {
+    "id": "0e2b5a31b99b5c9e",
+    "type": "split",
+    "children": [
+      {
+        "id": "b7f87b76e6df9460",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "071421a7de9dc3b4",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "Group 1.png"
+              },
+              "icon": "lucide-image",
+              "title": "Group 1"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "eed802a0eb542a36",
+    "type": "split",
+    "children": [
+      {
+        "id": "aac03a30026efe2d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2f274fe34ac6719a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "파일 탐색기"
+            }
+          },
+          {
+            "id": "49621615797f4d35",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "tag:#처음",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "검색"
+            }
+          },
+          {
+            "id": "ede4892480729c68",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "북마크"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "f5bfd0f887cb4c27",
+    "type": "split",
+    "children": [
+      {
+        "id": "80b91aa99a2e1035",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "217f7e60e87bd3ab",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Delivery-Project-Notes/01_Baseline/무제.md",
+                "collapseAll": true,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "무제 의 백링크"
+            }
+          },
+          {
+            "id": "d1148fd364df169a",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Delivery-Project-Notes/01_Baseline/무제.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "무제 의 나가는 링크"
+            }
+          },
+          {
+            "id": "9e22df62b8975d3f",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "태그"
+            }
+          },
+          {
+            "id": "1f25651c474ef3a3",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Group 1.png",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Group 1 의 개요"
+            }
+          },
+          {
+            "id": "c458602a3f74f06b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "모든 속성"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:빠른 전환기 열기": false,
+      "graph:그래프 뷰 열기": false,
+      "canvas:새 캔버스 만들기": false,
+      "daily-notes:오늘의 일일 노트 열기": false,
+      "templates:템플릿 삽입": false,
+      "command-palette:명령어 팔레트 열기": false,
+      "bases:새 베이스 생성하기": false
+    }
+  },
+  "active": "071421a7de9dc3b4",
+  "lastOpenFiles": [
+    "AI_개발자_프로젝트_방법론_8시간_특강_최종본.pdf",
+    "AI_개발자_프로젝트_방법론_8시간_특강_최종본.md",
+    "옵시디언 설치방법.pdf",
+    "Group 1.png",
+    "main.py",
+    "Delivery-Project-Notes/01_Baseline/무제.md",
+    "무제 2.canvas",
+    "무제 1.canvas",
+    "Delivery-Project-Notes/01_Baseline/02_project_baseline.md",
+    "Delivery-Project-Notes/03_Data_Event/04_naming_convention.md",
+    "Delivery-Project-Notes/03_Data_Event/03_event_catalog.md",
+    "Delivery-Project-Notes/03_Data_Event/02_data_sources.md",
+    "Delivery-Project-Notes/03_Data_Event/01_data_structure.md",
+    "Delivery-Project-Notes/02_Domain/03_workflow.md.md",
+    "Delivery-Project-Notes/02_Domain/02_user_roles.md.md",
+    "Delivery-Project-Notes/02_Domain/01_domain_elements.md",
+    "Delivery-Project-Notes/01_Baseline/01_project__statement.md",
+    "Delivery-Project-Notes/00_Inbox",
+    "Delivery-Project-Notes/Templates",
+    "Delivery-Project-Notes/08_Questions",
+    "Delivery-Project-Notes/07_GitHub",
+    "Delivery-Project-Notes/06_WBS",
+    "Delivery-Project-Notes/05_Scope",
+    "Delivery-Project-Notes/04_Architecture",
+    "무제.canvas",
+    "images/05_full_course_flow.png",
+    "images/04_practice_sequence.png",
+    "images/03_predevelopment_architecture.png",
+    "images/01_connection_logic.png",
+    "images/02_course_one_page_overview.png"
+  ]
+}
