@@ -1,1 +1,28 @@
 # AI Agent 엔지니어 부트캠프 TIL
+
+AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소입니다.
+
+## 목차
+
+### Claude 설명
+- [Claude 기본](Claude설명/claude기본.md) — Chat / Cowork / Code 비교
+
+### LLM과 AI Agent 이해
+- [AI 리터러시 & LLM 애플리케이션 입문](LLM과AI_Agent이해/LLM_APP입문.md)
+- [프롬프트 엔지니어링](LLM과AI_Agent이해/프롬프트엔지니어링.md) — 좋은 프롬프트 4요소, 하네스/컨텍스트 엔지니어링, CoT·ReAct·Tree-of-Thought
+- [n8n](LLM과AI_Agent이해/n8n.md) — 노코드 자동화 툴 소개
+
+### Github 실습
+- [Git 명령어 정리](github실습/Git명령어정리.md) — Git 기본 사용 흐름
+- [커밋 잘 쓰는 법](github실습/commit잘쓰는법.md)
+- [MD 문법 사용 예시 모음](github실습/MarkDownTest.md)
+
+### n8n 실습
+- [구글 폼 3개 입력받으면 이메일 보내기](n8n실습/구글폼3개입력받으면이메일보내기.md)
+- [내 자동화 봇 소개](n8n실습/내자동화봇소개.md) — 사주·날씨 기반 오늘의 운세 디스코드 봇
+
+### 프로그램 방법론
+- [프로젝트를 바라보는 방법](프로그램방법론/프로젝트를바라보는방법.md) — 프로젝트/프로덕트/운영 구분, WBS, 마일스톤
+- [기준선 작성](프로그램방법론/기준선작성.md)
+- [기준선 작성 참고](프로그램방법론/기준선작성참고.md) — 도메인 요소, 사용자 역할, 업무 흐름
+- [프로젝트 도구](프로그램방법론/프로젝트도구.md) — Obsidian, Notion, Jira, GitHub 역할 구분
