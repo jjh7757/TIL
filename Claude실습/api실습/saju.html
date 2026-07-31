@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>사주 보기</title>
+<style>
+  body { font-family: sans-serif; max-width: 480px; margin: 40px auto; padding: 0 16px; }
+  label { display: block; margin-top: 12px; font-size: 14px; }
+  input, select { width: 100%; padding: 8px; margin-top: 4px; box-sizing: border-box; }
+  button { margin-top: 20px; padding: 10px 16px; width: 100%; cursor: pointer; }
+  #result { margin-top: 24px; padding: 16px; background: #f4f4f4; border-radius: 8px; white-space: pre-wrap; display: none; }
+</style>
+</head>
+<body>
+  <h1>간단 사주 보기</h1>
+
+  <form id="saju-form">
+    <label>이름
+      <input type="text" id="name" required>
+    </label>
+    <label>생년월일
+      <input type="date" id="birthDate" required>
+    </label>
+    <label>태어난 시간 (모르면 비워두세요)
+      <input type="time" id="birthTime">
+    </label>
+    <label>성별
+      <select id="gender">
+        <option value="남">남</option>
+        <option value="여">여</option>
+      </select>
+    </label>
+    <button type="submit">사주 보기</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const form = document.getElementById('saju-form');
+    const resultBox = document.getElementById('result');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const payload = {
+        name: document.getElementById('name').value,
+        birthDate: document.getElementById('birthDate').value,
+        birthTime: document.getElementById('birthTime').value,
+        gender: document.getElementById('gender').value,
+      };
+
+      resultBox.style.display = 'block';
+      resultBox.textContent = '보는 중...';
+
+      try {
+        // TODO: 사주(사주팔자) 계산 로직은 아직 없음. 지금은 입력값을 그대로 서버에 던져서
+        // Gemini가 알아서 해석하게 하는 임시 구조.
+        const res = await fetch('/api/saju', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          throw new Error(`서버 오류 (${res.status})`);
+        }
+
+        const data = await res.json();
+        resultBox.textContent = data.result;
+      } catch (err) {
+        resultBox.textContent = '에러: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
