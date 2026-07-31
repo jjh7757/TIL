@@ -15,7 +15,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-07-28 | [Claude 기본](Claude실습/claude기본.md), [커밋 잘 쓰는 법](github실습/commit잘쓰는법.md), [게임만들기 — Maze Relay](Claude실습/게임만들기/README.md) |
 | 2026-07-29 | [API 실습 — 간단 사주 보기](Claude실습/api실습/사주프로그램/사주보기.md), [API 기초](CS지식/API기초.md) |
 | 2026-07-30 | [내 자동화 봇 소개](n8n실습/내자동화봇소개.md), [AI Agent란 — 서비스 구조와 실행 환경](CS지식/AIAgent구조.md) |
-| 2026-07-31 | [URL 구조](CS지식/URL구조.md), [HTTP 기초](CS지식/HTTP기초.md) |
+| 2026-07-31 | [URL 구조](CS지식/URL구조.md), [HTTP 기초](CS지식/HTTP기초.md), [HTTP 상태 코드](CS지식/HTTP상태코드.md) |
 
 ## 목차
 
@@ -48,5 +48,6 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 ### CS지식
 - [URL 구조](CS지식/URL구조.md) — scheme/authority/path/query/fragment 등 URL 구성 요소 정리
 - [HTTP 기초](CS지식/HTTP기초.md) — 요청/응답 구조, 메서드, 상태 코드, 무상태 특징 정리
+- [HTTP 상태 코드](CS지식/HTTP상태코드.md) — 1XX~5XX 분류와 리다이렉션 개념 정리
 - [API 기초](CS지식/API기초.md) — API 개념, REST API, API 키/인증 정리
 - [AI Agent란 — 서비스 구조와 실행 환경](CS지식/AIAgent구조.md) — Client/Agent/Server/DB/Cloud 구조와 클라우드가 필요한 이유
