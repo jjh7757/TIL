@@ -30,17 +30,39 @@
         <option value="여">여</option>
       </select>
     </label>
+    <label>Gemini API 키 (이 브라우저에만 저장됩니다)
+      <input type="password" id="apiKey" required>
+    </label>
     <button type="submit">사주 보기</button>
   </form>
 
   <div id="result"></div>
 
   <script>
+    // 주의: 이 파일은 브라우저에서 Gemini API를 직접 호출하는 데모용입니다.
+    // API 키는 소스코드에 넣지 않고 사용자가 직접 입력해서 localStorage에만 저장합니다.
+    // (그래도 브라우저 dev tools/네트워크 탭에는 그대로 보이므로 공개 배포용으로는 부적합합니다.)
+    const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/interactions";
+    const API_KEY_STORAGE_KEY = "saju_gemini_api_key";
+
     const form = document.getElementById('saju-form');
     const resultBox = document.getElementById('result');
+    const apiKeyInput = document.getElementById('apiKey');
+
+    apiKeyInput.value = localStorage.getItem(API_KEY_STORAGE_KEY) || '';
+
+    function buildPrompt({ name, birthDate, birthTime, gender }) {
+      // TODO: 실제 사주팔자(연/월/일/시주, 오행, 십신) 계산 로직은 아직 없음.
+      // 지금은 입력값만 그대로 Gemini에 던져서 알아서 해석하게 하는 임시 버전.
+      return `이름: ${name}, 생년월일: ${birthDate}, 태어난 시간: ${birthTime || '모름'}, ` +
+             `성별: ${gender}. 이 사람의 사주를 간단히 봐줘.`;
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const apiKey = apiKeyInput.value.trim();
+      localStorage.setItem(API_KEY_STORAGE_KEY, apiKey);
 
       const payload = {
         name: document.getElementById('name').value,
@@ -53,20 +75,25 @@
       resultBox.textContent = '보는 중...';
 
       try {
-        // TODO: 사주(사주팔자) 계산 로직은 아직 없음. 지금은 입력값을 그대로 서버에 던져서
-        // Gemini가 알아서 해석하게 하는 임시 구조.
-        const res = await fetch('/api/saju', {
+        const res = await fetch(GEMINI_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
+          headers: {
+            'x-goog-api-key': apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'gemini-3.5-flash',
+            input: buildPrompt(payload),
+          }),
         });
 
         if (!res.ok) {
-          throw new Error(`서버 오류 (${res.status})`);
+          throw new Error(`API 오류 (${res.status})`);
         }
 
         const data = await res.json();
-        resultBox.textContent = data.result;
+        const modelOutput = data.steps.find(s => s.type === 'model_output');
+        resultBox.textContent = modelOutput ? modelOutput.content[0].text : '결과를 받지 못했습니다.';
       } catch (err) {
         resultBox.textContent = '에러: ' + err.message;
       }
