@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maze Relay</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="gameCanvas" width="960" height="600"></canvas>
+
+  <div id="hud">
+    <div id="hearts"></div>
+    <div id="statusText"></div>
+  </div>
+
+  <!-- ── 타이틀 ───────────────────────────────────────────────
+       The relay is never mentioned here. Everything the player meets
+       downstairs has to read as ordinary dungeon fiction until the
+       outcome screen pulls the rug. -->
+  <div class="overlay show" id="titleScreen">
+    <div class="panel">
+      <h1>MAZE RELAY</h1>
+      <p class="sub">지하 미로에 갇혔다.<br>출구는 반대편 끝 어딘가에 있다.</p>
+      <div class="keycaps">
+        <div class="keycap">W</div><div class="keycap">A</div>
+        <div class="keycap">S</div><div class="keycap">D</div>
+      </div>
+      <p class="hint">WASD로 이동 · 바닥의 가시를 조심하세요</p>
+      <div class="btn-row" style="margin-top:22px">
+        <button class="primary" id="toSetupBtn">시작하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 닉네임 + 캐릭터 선택 ──────────────────────────────── -->
+  <div class="overlay" id="setupScreen">
+    <div class="panel wide">
+      <h2>누구입니까</h2>
+      <p class="sub">이 미로에 들어갈 사람의 이름과 모습을 정하세요.</p>
+      <div class="field">
+        <label class="field-label" for="nicknameInput">이름</label>
+        <input type="text" id="nicknameInput" maxlength="12" placeholder="예: 이름 없는 순례자" autocomplete="off">
+        <div class="counter"><span id="nickCount">0</span>/12</div>
+      </div>
+      <div class="field">
+        <label class="field-label">모습</label>
+        <div id="charGrid"></div>
+      </div>
+      <div class="btn-row">
+        <button class="primary" id="enterMazeBtn" disabled>미로로 내려가기</button>
+      </div>
+      <div class="status-line" id="setupStatus"></div>
+    </div>
+  </div>
+
+  <!-- ── 미로 끝에서의 조우 ────────────────────────────────── -->
+  <div class="overlay" id="encounterScreen">
+    <div class="panel">
+      <h2 id="encounterTitle">쓰러진 사람</h2>
+      <p class="sub">출구 앞에 누군가 쓰러져 있다. 당신을 보고 힘겹게 입을 연다.</p>
+      <div class="speech" id="encounterSpeech"></div>
+      <div class="btn-row">
+        <button class="danger" id="killBtn">죽인다</button>
+        <button id="spareBtn">살려준다</button>
+      </div>
+      <p class="hint">출구는 저 사람 너머에 있다.</p>
+    </div>
+  </div>
+
+  <!-- ── 결과 (배신 / 갇힘) ───────────────────────────────── -->
+  <div class="overlay" id="aftermathScreen">
+    <div class="panel">
+      <h2 id="aftermathTitle"></h2>
+      <p class="body-text" id="aftermathText"></p>
+      <div class="btn-row">
+        <button class="primary" id="toPleaBtn">…</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 다음 사람에게 남기는 부탁 ─────────────────────────── -->
+  <div class="overlay" id="pleaScreen">
+    <div class="panel">
+      <h2>애원</h2>
+      <p class="sub" id="pleaPrompt">
+        움직일 수 없다. 언젠가 누군가 이 앞을 지나갈 것이다.<br>그 사람에게 뭐라고 애원하겠습니까?
+      </p>
+      <div class="field">
+        <textarea id="pleaInput" maxlength="80" placeholder="예: 제발… 살려주세요. 아직 죽고 싶지 않아요."></textarea>
+        <div class="counter"><span id="pleaCount">0</span>/80</div>
+      </div>
+      <div class="btn-row">
+        <button class="primary" id="savePleaBtn">남기고 끝낸다</button>
+        <button id="skipPleaBtn">아무 말도 남기지 않는다</button>
+      </div>
+      <div class="status-line" id="pleaStatus"></div>
+    </div>
+  </div>
+
+  <!-- ── 반전 공개 + 내 부탁의 결말 ────────────────────────── -->
+  <div class="overlay" id="outcomeScreen">
+    <div class="panel wide">
+      <h2>…</h2>
+      <div id="outcomeBody"></div>
+      <div class="btn-row" style="margin-top:20px">
+        <button class="primary" id="retryBtn">다시 들어간다</button>
+        <button id="toTitleBtn">타이틀로</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>

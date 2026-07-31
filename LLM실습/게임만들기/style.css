@@ -1,0 +1,203 @@
+/* Palette is sampled from Dungeon_Tileset.png so the DOM overlays and the
+   canvas read as one artwork instead of a game with a website bolted on. */
+:root{
+  --bg:        #140f18;
+  --stone:     #2a1f2d;
+  --stone-lit: #3b2c3f;
+  --brick:     #8b6f5e;
+  --brick-hi:  #b08d76;
+  --gold:      #d9a441;
+  --blood:     #a83232;
+  --blood-hi:  #d64545;
+  --ink:       #e8dfd2;
+  --ink-dim:   #9a8c7e;
+}
+
+*{ box-sizing:border-box; }
+
+html,body{
+  margin:0; padding:0;
+  height:100%;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Malgun Gothic","Apple SD Gothic Neo",-apple-system,sans-serif;
+  overflow:hidden;
+}
+
+#stage{
+  position:relative;
+  width:100vw; height:100vh;
+  display:flex; align-items:center; justify-content:center;
+}
+
+canvas{
+  display:block;
+  /* the whole point of a 16px tileset -- never let the browser smooth it */
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  background:var(--bg);
+}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:absolute; top:0; left:0; right:0;
+  display:none;
+  align-items:center; justify-content:space-between;
+  padding:14px 20px;
+  font-size:14px;
+  letter-spacing:.05em;
+  text-shadow:0 2px 0 #000;
+  pointer-events:none;
+  z-index:5;
+}
+#hearts{ display:flex; gap:6px; }
+.heart{
+  width:16px; height:16px;
+  background:var(--blood-hi);
+  clip-path:polygon(50% 100%,0 45%,0 18%,25% 0,50% 18%,75% 0,100% 18%,100% 45%);
+  transition:opacity .15s;
+}
+.heart.lost{ opacity:.18; }
+#statusText{ color:var(--ink-dim); font-size:13px; }
+
+/* ---------- Overlays ---------- */
+.overlay{
+  position:absolute; inset:0;
+  display:none;
+  align-items:center; justify-content:center;
+  padding:24px;
+  background:rgba(10,7,12,.9);
+  z-index:10;
+  animation:fade .25s ease-out;
+}
+.overlay.show{ display:flex; }
+@keyframes fade{ from{opacity:0} to{opacity:1} }
+
+.panel{
+  width:min(560px,100%);
+  max-height:calc(100vh - 48px);
+  overflow-y:auto;
+  background:var(--stone);
+  border:3px solid var(--brick);
+  box-shadow:0 0 0 3px #000, 0 18px 50px rgba(0,0,0,.7);
+  padding:30px 28px;
+  text-align:center;
+}
+.panel.wide{ width:min(720px,100%); }
+
+h1{
+  margin:0 0 6px;
+  font-size:36px; letter-spacing:.12em;
+  color:var(--gold);
+  text-shadow:0 3px 0 #000;
+}
+h2{
+  margin:0 0 14px;
+  font-size:22px; letter-spacing:.06em;
+  color:var(--gold);
+  text-shadow:0 2px 0 #000;
+}
+.sub{ margin:0 0 22px; color:var(--ink-dim); font-size:14px; line-height:1.7; }
+.body-text{ font-size:15px; line-height:1.85; margin:0 0 20px; }
+.hint{ font-size:12px; color:var(--ink-dim); margin-top:16px; line-height:1.6; }
+
+/* ---------- Buttons ---------- */
+button{
+  font-family:inherit; font-size:14px; letter-spacing:.05em;
+  color:var(--ink);
+  background:var(--stone-lit);
+  border:2px solid var(--brick);
+  padding:12px 22px;
+  cursor:pointer;
+  transition:background .12s, transform .06s;
+}
+button:hover:not(:disabled){ background:var(--brick); color:#1a1119; }
+button:active:not(:disabled){ transform:translateY(2px); }
+button:disabled{ opacity:.4; cursor:default; }
+button.primary{ background:var(--gold); border-color:var(--gold); color:#241703; font-weight:bold; }
+button.primary:hover:not(:disabled){ background:#f0bc5c; }
+button.danger{ border-color:var(--blood); color:var(--blood-hi); }
+button.danger:hover:not(:disabled){ background:var(--blood); color:var(--ink); }
+.btn-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
+
+/* ---------- Forms ---------- */
+input[type=text],textarea{
+  width:100%;
+  font-family:inherit; font-size:15px;
+  color:var(--ink);
+  background:#1b1420;
+  border:2px solid var(--brick);
+  padding:11px 13px;
+  outline:none;
+}
+input[type=text]:focus,textarea:focus{ border-color:var(--gold); }
+textarea{ resize:none; height:82px; line-height:1.6; }
+.field-label{
+  display:block; text-align:left;
+  font-size:12px; color:var(--ink-dim);
+  margin:0 0 7px; letter-spacing:.06em;
+}
+.field{ margin-bottom:20px; }
+.counter{ text-align:right; font-size:11px; color:var(--ink-dim); margin-top:5px; }
+
+/* ---------- Character picker ---------- */
+#charGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(56px,1fr));
+  gap:8px;
+  margin-bottom:8px;
+}
+.char-cell{
+  aspect-ratio:1;
+  background:#1b1420;
+  border:2px solid #3b2c3f;
+  cursor:pointer;
+  padding:0;
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color .12s, background .12s;
+}
+.char-cell:hover{ background:#241a2a; border-color:var(--brick); }
+.char-cell.selected{ border-color:var(--gold); background:#2e2233; }
+.char-cell canvas{ width:100%; height:100%; image-rendering:pixelated; }
+
+/* ---------- Encounter / message ---------- */
+.speech{
+  background:#1b1420;
+  border-left:4px solid var(--blood);
+  padding:18px 20px;
+  margin:0 0 22px;
+  font-size:17px; line-height:1.75;
+  text-align:left;
+  word-break:keep-all;
+}
+.speech .who{
+  display:block;
+  margin-top:12px;
+  font-size:12px; color:var(--ink-dim);
+}
+
+/* ---------- Outcome / reveal ---------- */
+.reveal{
+  border:2px solid var(--gold);
+  background:rgba(217,164,65,.07);
+  padding:18px 20px;
+  margin:0 0 20px;
+  font-size:15px; line-height:1.8;
+  text-align:left;
+  word-break:keep-all;
+}
+.reveal strong{ color:var(--gold); }
+.verdict-killed{ color:var(--blood-hi); font-weight:bold; }
+.verdict-spared{ color:#6fcf7f; font-weight:bold; }
+
+.status-line{ font-size:12px; color:var(--ink-dim); min-height:18px; margin-top:12px; }
+
+.keycaps{ display:flex; gap:6px; justify-content:center; margin:18px 0 4px; }
+.keycap{
+  width:34px; height:34px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--stone-lit);
+  border:2px solid var(--brick);
+  font-size:13px; font-weight:bold;
+  color:var(--ink);
+}
