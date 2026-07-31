@@ -15,6 +15,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-07-28 | [Claude 기본](Claude실습/claude기본.md), [커밋 잘 쓰는 법](github실습/commit잘쓰는법.md), [게임만들기 — Maze Relay](Claude실습/게임만들기/README.md) |
 | 2026-07-29 | [API 실습 — 간단 사주 보기](Claude실습/api실습/사주프로그램/사주보기.md) |
 | 2026-07-30 | [내 자동화 봇 소개](n8n실습/내자동화봇소개.md) |
+| 2026-07-31 | [URL 구조](CS지식/URL구조.md) |
 
 ## 목차
 
@@ -22,7 +23,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [Claude 기본](Claude실습/claude기본.md) — Chat / Cowork / Code 비교
 - [AI와 함께 찾은 나의 강점](Claude실습/나의강점.md) — AI와의 대화로 정리한 나의 강점 3가지
 - [게임만들기 — Maze Relay](Claude실습/게임만들기/README.md) — 도트 던전 미로 탈출 게임. 플레이어끼리 Supabase로 메시지를 릴레이하며 죽일지 살릴지 판정하는 비동기 멀티플레이 구조 (원본: [maze-relay](https://github.com/jjh7757/maze-relay))
-- [API 실습 — 간단 사주 보기](Claude실습/api실습/사주프로그램/사주보기.md) — 입력값을 백엔드 API로 넘겨 LLM이 해석한 사주를 보여주는 프론트엔드 실습
+- [API 실습 — 간단 사주 보기](Claude실습/api실습/사주프로그램/사주보기.md) — 브라우저에서 Gemini API를 직접 호출해 사주를 해석해주는 프론트엔드 실습
 
 ### LLM과 AI Agent 이해
 - [AI 리터러시 & LLM 애플리케이션 입문](LLM과AI_Agent이해/LLM_APP입문.md)
@@ -43,3 +44,6 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [기준선 작성](프로그램방법론/기준선작성.md)
 - [기준선 작성 참고](프로그램방법론/기준선작성참고.md) — 도메인 요소, 사용자 역할, 업무 흐름
 - [프로젝트 도구](프로그램방법론/프로젝트도구.md) — Obsidian, Notion, Jira, GitHub 역할 구분
+
+### CS지식
+- [URL 구조](CS지식/URL구조.md) — scheme/authority/path/query/fragment 등 URL 구성 요소 정리
