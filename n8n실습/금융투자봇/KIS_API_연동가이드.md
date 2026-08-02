@@ -132,6 +132,23 @@ n8n AI Agent 노드의 System Message에 이 규칙을 명시한다.
 
 ---
 
+## 5. 거래내역 조회 Tool (예정)
+
+KIS API 호출이 필요 없는 tool. Supabase `trade_log`를 직접 조회해서 자연어로 요약해준다.
+
+- **When Executed by Another Workflow** — Input: `chat_id` (고정값으로 전달)
+- **Supabase (Get Many rows)**
+  - Table: `trade_log`
+  - Filter: `chat_id` = 입력받은 값
+  - Sort: `created_at` 내림차순
+  - Limit: 10 (최근 10건)
+- 응답 배열을 그대로 반환 → Agent가 "8/1에 삼성전자 1주 매수하셨습니다" 식으로 자연어 요약
+
+메인 Agent에 연결할 때 tool 이름은 `get_trade_history`, chat_id는 다른 tool들과 동일하게
+**고정값**(텔레그램 chat id 표현식)으로 설정한다.
+
+---
+
 ## n8n에서 조립하는 방법
 
 1. 위 1~4를 각각 **별도의 서브워크플로우**로 만든다 (Webhook 대신 "Execute Workflow Trigger"로 시작).
