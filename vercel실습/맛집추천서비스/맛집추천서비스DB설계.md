@@ -71,6 +71,40 @@ where user_id = auth.uid()
 order by rating desc nulls last;
 ```
 
+## 업데이트 — 전체 공개 조회로 변경
+
+사용자 요청에 따라 "본인 목록만 조회" 정책을 "읽기는 공개, 쓰기는 본인만"으로 바꿨습니다.
+
+```sql
+drop policy if exists "users can read own restaurants" on public.restaurants;
+
+create policy "authenticated users can read all restaurants"
+  on public.restaurants for select to authenticated using (true);
+```
+
+목록·상세·추천 화면에 등록자를 표시하기 위해 프로필 테이블을 추가하고, 신규 가입 시 트리거로 채웁니다.
+
+```sql
+create table if not exists public.profiles (
+  id    uuid primary key references auth.users(id) on delete cascade,
+  email text not null
+);
+
+create function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email) values (new.id, new.email);
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute function public.handle_new_user();
+```
+
+INSERT/UPDATE/DELETE 정책은 그대로 본인 소유 행만 가능하도록 유지합니다 (`auth.uid() = user_id`).
+
 ## 이전 설계에서 빠진 것 (필요해지면 다시 검토)
 - 카카오/네이버 지도 API로 식당을 검색·캐싱하는 기능 — 지금은 사용자가 이름·주소를 직접 입력
 - 위도/경도 기반 "내 근처" 검색 — `address`가 텍스트라 거리순 정렬 불가
@@ -78,5 +112,6 @@ order by rating desc nulls last;
   별도 즐겨찾기 테이블 — 등록된 행 자체가 "내 리스트"이자 사실상 즐겨찾기라 따로 안 둠
 
 ## 아직 정하지 않은 것
-- 다른 사람이 등록한 식당도 공유해서 볼 수 있게 할지 (지금은 RLS로 본인 것만 조회 가능)
 - `category`를 5종 고정 enum이 아니라 자유 입력으로 바꿀지
+
+> 다른 사람이 등록한 식당을 공유해서 볼 수 있게 할지는 "업데이트" 항목에서 공개 조회로 확정했습니다.
