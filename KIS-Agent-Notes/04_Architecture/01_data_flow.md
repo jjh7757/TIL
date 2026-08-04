@@ -292,7 +292,7 @@ n8n 서브워크플로우는 마지막 실행 노드의 출력을 반환합니�
 
 ## 관련 문서
 
-- [[02_architecture|아키텍처]]
-- [[../02_Domain/03_workflow|정상·예외 업무 흐름]]
-- [[../03_Data_Event/02_data_sources|데이터 소스]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [아키텍처](02_architecture.md)
+- [정상·예외 업무 흐름](../02_Domain/03_workflow.md)
+- [데이터 소스](../03_Data_Event/02_data_sources.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

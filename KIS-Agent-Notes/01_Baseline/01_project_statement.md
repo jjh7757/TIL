@@ -93,4 +93,4 @@ KIS 모의투자 계좌 데이터와 용어 설명을 결합한 텔레그램 대
 
 ## 관련 문서
 
-- [[02_project_baseline|프로젝트 기준선]]
+- [프로젝트 기준선](02_project_baseline.md)

@@ -128,6 +128,6 @@
 
 ## 관련 문서
 
-- [[02_user_roles|사용자 역할]]
-- [[03_workflow|정상·예외 업무 흐름]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [사용자 역할](02_user_roles.md)
+- [정상·예외 업무 흐름](03_workflow.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

@@ -30,7 +30,7 @@
 이 프로젝트는 **수익을 목표로 하지 않습니다.** 사용자가 자신의 판단을 이해하고 설명할 수 있게 만드는 것이 목적입니다.
 
 **성공 기준**: 사용자가 자신의 매매 판단 근거를 설명할 수 있는가.
-근거와 제외 이유는 [[01_project_statement|프로젝트 한 문장]] 문서를 참고합니다.
+근거와 제외 이유는 [프로젝트 한 문장](01_project_statement.md) 문서를 참고합니다.
 
 ---
 
@@ -69,7 +69,7 @@
 
 `판단 근거`는 이 프로젝트의 **성공 기준을 측정하는 유일한 대상**이므로 1급 도메인 요소로 취급합니다.
 
-자세한 내용은 [[../02_Domain/01_domain_elements|도메인 요소]] 문서를 참고합니다.
+자세한 내용은 [도메인 요소](../02_Domain/01_domain_elements.md) 문서를 참고합니다.
 
 ---
 
@@ -93,7 +93,7 @@
 등록되지 않은 chat_id는 응답 없이 무시합니다.
 ```
 
-봇은 누구나 찾을 수 있고 주문은 되돌릴 수 없으므로, 이 규칙은 `Must`입니다. 자세한 근거는 [[../02_Domain/02_user_roles|사용자 역할]] 문서를 참고합니다.
+봇은 누구나 찾을 수 있고 주문은 되돌릴 수 없으므로, 이 규칙은 `Must`입니다. 자세한 근거는 [사용자 역할](../02_Domain/02_user_roles.md) 문서를 참고합니다.
 
 ---
 
@@ -134,7 +134,7 @@
 
 > **11개 중 8개가 주문 흐름의 예외입니다.** 주문이 되돌릴 수 없기 때문입니다. 정상 흐름보다 예외 흐름에 개발 시간이 더 들 것으로 예상합니다.
 
-자세한 내용은 [[../02_Domain/03_workflow|정상·예외 업무 흐름]] 문서를 참고합니다.
+자세한 내용은 [정상·예외 업무 흐름](../02_Domain/03_workflow.md) 문서를 참고합니다.
 
 ---
 
@@ -177,7 +177,7 @@
 
 > **흐름 A(용어 설명)는 KIS에 의존하지 않습니다.** 발표 당일 KIS 장애가 나도 시연 가능합니다. 시연 순서는 의존성이 낮은 흐름부터 배치합니다.
 
-자세한 내용은 [[../03_Data_Event/02_data_sources|데이터 소스]] 문서를 참고합니다.
+자세한 내용은 [데이터 소스](../03_Data_Event/02_data_sources.md) 문서를 참고합니다.
 
 ---
 
@@ -214,7 +214,7 @@
 | 계좌번호 | 저장하지 않습니다. n8n Credential 또는 환경변수. 노출 금지. |
 | KIS 앱키·시크릿, 봇 토큰, LLM 키 | n8n Credential. 워크플로우 JSON 내보내기 시 포함 여부 확인. |
 
-자세한 내용은 [[../03_Data_Event/01_data_structure|데이터 구조 초안]] 문서를 참고합니다.
+자세한 내용은 [데이터 구조 초안](../03_Data_Event/01_data_structure.md) 문서를 참고합니다.
 
 ---
 
@@ -254,7 +254,7 @@
 
 > **이 4개를 측정할 수 있어야 발표에서 결과를 보여줄 수 있습니다.** 이벤트를 남기지 않으면 발표에서 "동작합니다"만 말하고 끝납니다.
 
-자세한 내용은 [[../03_Data_Event/03_event_catalog|이벤트 카탈로그]] 문서를 참고합니다.
+자세한 내용은 [이벤트 카탈로그](../03_Data_Event/03_event_catalog.md) 문서를 참고합니다.
 
 ---
 
@@ -321,7 +321,7 @@
 
 **장 시간 밖에 발표하면 1~3만 라이브, 4는 녹화 영상으로 대체합니다.**
 
-자세한 내용은 [[../04_Architecture/01_data_flow|데이터 흐름]]과 [[../04_Architecture/02_architecture|아키텍처]] 문서를 참고합니다.
+자세한 내용은 [데이터 흐름](../04_Architecture/01_data_flow.md)과 [아키텍처](../04_Architecture/02_architecture.md) 문서를 참고합니다.
 
 ---
 
@@ -347,7 +347,7 @@
 | 예상 금액 / 실제 체결 금액 | `expected_amount` / 체결 조회 결과 | 금액 불일치로 혼란 |
 | 예수금 / 보유종목 평가금액 | `deposit` / `holding` | 둘 다 "잔고"로 불려 헷갈림 |
 
-자세한 내용은 [[../03_Data_Event/04_naming_convention|용어와 네이밍 컨벤션]] 문서를 참고합니다.
+자세한 내용은 [용어와 네이밍 컨벤션](../03_Data_Event/04_naming_convention.md) 문서를 참고합니다.
 
 ## 11. 산출물 기준
 
@@ -398,7 +398,7 @@
 가용 40h (5일 × 8h) = 개발 Must 30h + 문서 검토 3h + 발표 리허설 2h + 버퍼 5h
 ```
 
-자세한 내용은 [[../05_Scope/01_mvp_scope|MVP 범위와 기능 우선순위]] 문서를 참고합니다.
+자세한 내용은 [MVP 범위와 기능 우선순위](../05_Scope/01_mvp_scope.md) 문서를 참고합니다.
 
 ---
 
@@ -449,7 +449,7 @@
 - [ ] 측정 지표 4개를 각각 SQL 한 번으로 산출할 수 있습니다.
 - [ ] 계좌번호·`chat_id`·토큰값이 문서·발표자료·시연 영상에 없습니다.
 
-전체 체크리스트는 [[../05_Scope/02_definition_of_done|완료 기준과 체크리스트]] 문서를 참고합니다.
+전체 체크리스트는 [완료 기준과 체크리스트](../05_Scope/02_definition_of_done.md) 문서를 참고합니다.
 
 ### 팀 완료의 정의
 
@@ -580,37 +580,37 @@ n8n 워크플로우로 아래 기능이 이미 구현되어 동작합니다. **�
 
 ### 프로젝트 정의
 
-- [[01_project_statement|프로젝트 한 문장]]
+- [프로젝트 한 문장](01_project_statement.md)
 
 ### 도메인
 
-- [[../02_Domain/01_domain_elements|도메인 요소]]
-- [[../02_Domain/02_user_roles|사용자 역할]]
-- [[../02_Domain/03_workflow|정상·예외 업무 흐름]]
+- [도메인 요소](../02_Domain/01_domain_elements.md)
+- [사용자 역할](../02_Domain/02_user_roles.md)
+- [정상·예외 업무 흐름](../02_Domain/03_workflow.md)
 
 ### 데이터와 이벤트
 
-- [[../03_Data_Event/01_data_structure|데이터 구조 초안]]
-- [[../03_Data_Event/02_data_sources|데이터 소스]]
-- [[../03_Data_Event/03_event_catalog|이벤트 카탈로그]]
-- [[../03_Data_Event/04_naming_convention|용어와 네이밍 컨벤션]]
+- [데이터 구조 초안](../03_Data_Event/01_data_structure.md)
+- [데이터 소스](../03_Data_Event/02_data_sources.md)
+- [이벤트 카탈로그](../03_Data_Event/03_event_catalog.md)
+- [용어와 네이밍 컨벤션](../03_Data_Event/04_naming_convention.md)
 
 ### 아키텍처
 
-- [[../04_Architecture/01_data_flow|데이터 흐름]]
-- [[../04_Architecture/02_architecture|아키텍처]]
+- [데이터 흐름](../04_Architecture/01_data_flow.md)
+- [아키텍처](../04_Architecture/02_architecture.md)
 
 ### 범위와 완료 기준
 
-- [[../05_Scope/01_mvp_scope|MVP 범위와 기능 우선순위]]
-- [[../05_Scope/02_definition_of_done|완료 기준과 체크리스트]]
+- [MVP 범위와 기능 우선순위](../05_Scope/01_mvp_scope.md)
+- [완료 기준과 체크리스트](../05_Scope/02_definition_of_done.md)
 
 ### 실행 계획
 
-- [[../06_WBS/01_wbs|WBS — 개발 작업 분해]]
-- [[../06_WBS/02_milestones|5일 마일스톤과 위험]]
+- [WBS — 개발 작업 분해](../06_WBS/01_wbs.md)
+- [5일 마일스톤과 위험](../06_WBS/02_milestones.md)
 
 ### GitHub 문서와 발표자료
 
-- [[../07_GitHub/01_readme_draft|GitHub README 초안]]
-- [[../07_GitHub/02_presentation|2분 발표자료 초안]]
+- [GitHub README 초안](../07_GitHub/01_readme_draft.md)
+- [2분 발표자료 초안](../07_GitHub/02_presentation.md)

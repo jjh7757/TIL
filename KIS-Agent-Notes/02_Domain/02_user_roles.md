@@ -88,6 +88,6 @@
 
 ## 관련 문서
 
-- [[01_domain_elements|도메인 요소]]
-- [[03_workflow|정상·예외 업무 흐름]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [도메인 요소](01_domain_elements.md)
+- [정상·예외 업무 흐름](03_workflow.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

@@ -281,7 +281,7 @@ WBS 작업을 5일 일정에 배치합니다. 교안은 6주 마일스톤을 예
 
 ## 관련 문서
 
-- [[01_wbs|WBS — 개발 작업 분해]]
-- [[../05_Scope/01_mvp_scope|MVP 범위와 기능 우선순위]]
-- [[../05_Scope/02_definition_of_done|완료 기준과 체크리스트]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [WBS — 개발 작업 분해](01_wbs.md)
+- [MVP 범위와 기능 우선순위](../05_Scope/01_mvp_scope.md)
+- [완료 기준과 체크리스트](../05_Scope/02_definition_of_done.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

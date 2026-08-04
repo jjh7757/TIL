@@ -141,7 +141,7 @@ Day 4 종료 시점에 이미 시연 가능한 상태를 완성한다
 → Day 5는 통째로 버퍼 + 발표 준비
 ```
 
-Must 기능을 Day 1~4에 몰아넣는 배치입니다. 상세 일정은 [[../06_WBS/02_milestones|마일스톤]] 문서에서 작성합니다.
+Must 기능을 Day 1~4에 몰아넣는 배치입니다. 상세 일정은 [마일스톤](../06_WBS/02_milestones.md) 문서에서 작성합니다.
 
 ---
 
@@ -184,6 +184,6 @@ Must 기능을 Day 1~4에 몰아넣는 배치입니다. 상세 일정은 [[../06
 
 ## 관련 문서
 
-- [[02_definition_of_done|완료 기준과 체크리스트]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
-- [[../04_Architecture/02_architecture|아키텍처]]
+- [완료 기준과 체크리스트](02_definition_of_done.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)
+- [아키텍처](../04_Architecture/02_architecture.md)

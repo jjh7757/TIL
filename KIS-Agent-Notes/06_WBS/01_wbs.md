@@ -232,7 +232,7 @@
 
 ## 관련 문서
 
-- [[02_milestones|5일 마일스톤과 위험]]
-- [[../05_Scope/01_mvp_scope|MVP 범위와 기능 우선순위]]
-- [[../05_Scope/02_definition_of_done|완료 기준과 체크리스트]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [5일 마일스톤과 위험](02_milestones.md)
+- [MVP 범위와 기능 우선순위](../05_Scope/01_mvp_scope.md)
+- [완료 기준과 체크리스트](../05_Scope/02_definition_of_done.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

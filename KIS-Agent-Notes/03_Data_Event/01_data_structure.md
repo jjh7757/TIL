@@ -248,7 +248,7 @@ create unique index orders_one_active_per_chat
 
 `payload`를 `jsonb`로 둔 이유: 이벤트마다 담을 내용이 달라서 컬럼을 미리 고정할 수 없습니다. 예를 들어 `intent_classification_failed`는 원문을, `stock_ambiguous`는 후보 목록을 담습니다.
 
-자세한 이벤트 정의는 [[03_event_catalog|이벤트 카탈로그]]를 참고합니다.
+자세한 이벤트 정의는 [이벤트 카탈로그](03_event_catalog.md)를 참고합니다.
 
 ---
 
@@ -293,7 +293,7 @@ event_logs ──> orders (order_id, 선택적)
 
 ## 관련 문서
 
-- [[02_data_sources|데이터 소스]]
-- [[03_event_catalog|이벤트 카탈로그]]
-- [[04_naming_convention|용어와 네이밍 컨벤션]]
-- [[../02_Domain/03_workflow|정상·예외 업무 흐름]]
+- [데이터 소스](02_data_sources.md)
+- [이벤트 카탈로그](03_event_catalog.md)
+- [용어와 네이밍 컨벤션](04_naming_convention.md)
+- [정상·예외 업무 흐름](../02_Domain/03_workflow.md)

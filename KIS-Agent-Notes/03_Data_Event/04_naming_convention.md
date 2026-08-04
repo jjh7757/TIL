@@ -228,6 +228,6 @@ n8n은 이름 규칙이 없으면 금방 읽을 수 없게 됩니다.
 
 ## 관련 문서
 
-- [[01_data_structure|데이터 구조 초안]]
-- [[02_data_sources|데이터 소스]]
-- [[03_event_catalog|이벤트 카탈로그]]
+- [데이터 구조 초안](01_data_structure.md)
+- [데이터 소스](02_data_sources.md)
+- [이벤트 카탈로그](03_event_catalog.md)

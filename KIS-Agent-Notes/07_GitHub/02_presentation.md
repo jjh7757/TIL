@@ -245,7 +245,7 @@ KIS 토큰 발급/갱신                    의도 분류 (자연어 → 요청)
 
 ## 관련 문서
 
-- [[01_readme_draft|GitHub README 초안]]
-- [[../05_Scope/02_definition_of_done|완료 기준과 체크리스트]]
-- [[../04_Architecture/02_architecture|아키텍처]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [GitHub README 초안](01_readme_draft.md)
+- [완료 기준과 체크리스트](../05_Scope/02_definition_of_done.md)
+- [아키텍처](../04_Architecture/02_architecture.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

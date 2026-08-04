@@ -146,12 +146,12 @@
 → 이벤트 기록
 ```
 
-상세 다이어그램은 5교시 단계의 [[../04_Architecture/01_data_flow|데이터 흐름]] 문서에서 작성합니다.
+상세 다이어그램은 5교시 단계의 [데이터 흐름](../04_Architecture/01_data_flow.md) 문서에서 작성합니다.
 
 ---
 
 ## 관련 문서
 
-- [[01_data_structure|데이터 구조 초안]]
-- [[03_event_catalog|이벤트 카탈로그]]
-- [[04_naming_convention|용어와 네이밍 컨벤션]]
+- [데이터 구조 초안](01_data_structure.md)
+- [이벤트 카탈로그](03_event_catalog.md)
+- [용어와 네이밍 컨벤션](04_naming_convention.md)

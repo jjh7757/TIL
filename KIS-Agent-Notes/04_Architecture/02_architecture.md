@@ -247,7 +247,7 @@ LLM이 의도를 잘못 분류하면 그 아래 모든 흐름이 어긋납니다
 
 ## 관련 문서
 
-- [[01_data_flow|데이터 흐름]]
-- [[../02_Domain/03_workflow|정상·예외 업무 흐름]]
-- [[../03_Data_Event/01_data_structure|데이터 구조 초안]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [데이터 흐름](01_data_flow.md)
+- [정상·예외 업무 흐름](../02_Domain/03_workflow.md)
+- [데이터 구조 초안](../03_Data_Event/01_data_structure.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

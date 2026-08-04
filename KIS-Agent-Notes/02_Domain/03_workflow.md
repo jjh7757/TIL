@@ -339,6 +339,6 @@ unauthorized_access_blocked
 
 ## 관련 문서
 
-- [[01_domain_elements|도메인 요소]]
-- [[02_user_roles|사용자 역할]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
+- [도메인 요소](01_domain_elements.md)
+- [사용자 역할](02_user_roles.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)

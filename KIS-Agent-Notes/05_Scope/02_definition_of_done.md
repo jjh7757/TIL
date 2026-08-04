@@ -226,6 +226,6 @@
 
 ## 관련 문서
 
-- [[01_mvp_scope|MVP 범위와 기능 우선순위]]
-- [[../01_Baseline/02_project_baseline|프로젝트 기준선]]
-- [[../03_Data_Event/03_event_catalog|이벤트 카탈로그]]
+- [MVP 범위와 기능 우선순위](01_mvp_scope.md)
+- [프로젝트 기준선](../01_Baseline/02_project_baseline.md)
+- [이벤트 카탈로그](../03_Data_Event/03_event_catalog.md)

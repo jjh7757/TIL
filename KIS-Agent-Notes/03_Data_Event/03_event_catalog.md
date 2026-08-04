@@ -168,7 +168,7 @@ rationale_recorded 없이는
 
 ## 관련 문서
 
-- [[01_data_structure|데이터 구조 초안]]
-- [[02_data_sources|데이터 소스]]
-- [[04_naming_convention|용어와 네이밍 컨벤션]]
-- [[../02_Domain/03_workflow|정상·예외 업무 흐름]]
+- [데이터 구조 초안](01_data_structure.md)
+- [데이터 소스](02_data_sources.md)
+- [용어와 네이밍 컨벤션](04_naming_convention.md)
+- [정상·예외 업무 흐름](../02_Domain/03_workflow.md)
