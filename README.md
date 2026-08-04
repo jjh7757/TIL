@@ -19,7 +19,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-01 | [금융투자봇 — KIS 모의투자 연동 텔레그램 AI 에이전트](n8n실습/금융투자봇/README.md), [아침 자동화 봇 커스터마이징](n8n실습/내자동화봇커스터마이징.md), [미니프로젝트 아이디어 초안](프로그램방법론/미니프로젝트아이디어초안.md) |
 | 2026-08-02 | [한국투자증권 Open API 연동 가이드](n8n실습/금융투자봇/KIS_API_연동가이드.md) |
 | 2026-08-03 | [소프트웨어 종류](CS지식/소프트웨어종류.md), [컴퓨터 구조](CS지식/컴퓨터구조.md), [웹 서비스 구조](CS지식/웹서비스구조.md), [맛집 추천 서비스 기준선](vercel실습/맛집추천서비스/맛집추천서비스기준선.md), [DB 설계](vercel실습/맛집추천서비스/맛집추천서비스DB설계.md), [화면 설계](vercel실습/맛집추천서비스/맛집추천서비스화면설계.md), [구현 정리](vercel실습/맛집추천서비스/맛집추천서비스구현.md) |
-| 2026-08-04 | [웹 디자인 기초](CS지식/웹디자인기초.md), [맛집 추천 서비스 구현 정리 업데이트](vercel실습/맛집추천서비스/맛집추천서비스구현.md) — 디자인 시스템 적용, 네이버/Gemini API 위치 기반 추천 추가 |
+| 2026-08-04 | [웹 디자인 기초](CS지식/웹디자인기초.md), [맛집 추천 서비스 구현 정리 업데이트](vercel실습/맛집추천서비스/맛집추천서비스구현.md) — 디자인 시스템 적용, 네이버/Gemini API 위치 기반 추천 추가, [KIS 모의투자 텔레그램 에이전트 기획서](KIS-Agent-Notes/01_Baseline/01_project_statement.md) — 기준선~실행계획 17개 문서 (KIS-Agent-Notes) |
 
 ## 목차
 
@@ -54,6 +54,17 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [맛집 추천 서비스 DB 설계](vercel실습/맛집추천서비스/맛집추천서비스DB설계.md) — `restaurants` 단일 테이블 설계, RLS 정책, 예산 필터링 쿼리
 - [맛집 추천 서비스 화면 설계](vercel실습/맛집추천서비스/맛집추천서비스화면설계.md) — 목록/상세/등록 화면 흐름과 DB 필드 매핑
 - [맛집 추천 서비스 구현 정리](vercel실습/맛집추천서비스/맛집추천서비스구현.md) — 화면 5개 스크린샷과 구현 내용 정리, 무드보드 기반 디자인 시스템·네이버 지역 검색(NCP)/Gemini API 위치 기반 추천 업데이트 포함 (구현 저장소: [jjh7757/bitebudget](https://github.com/jjh7757/bitebudget))
+
+### KIS-Agent-Notes (KIS 모의투자 텔레그램 에이전트 기획)
+[금융투자봇](n8n실습/금융투자봇/README.md) 아이디어를 5일 개인 프로젝트로 구체화한 기획서. [기준선 작성](프로그램방법론/기준선작성.md)의 12개 항목 템플릿을 그대로 적용해 기준선부터 실행계획까지 정리.
+
+- **01_Baseline** — [프로젝트 한 문장](KIS-Agent-Notes/01_Baseline/01_project_statement.md)(성공 기준을 "수익"이 아닌 "판단 근거 설명 가능"으로 잡은 이유, 확인한 사실 7개·미검증 가정 5개), [프로젝트 기준선](KIS-Agent-Notes/01_Baseline/02_project_baseline.md)(목적·도메인·데이터·이벤트·아키텍처·범위·완료 기준 12개 항목)
+- **02_Domain** — [도메인 요소](KIS-Agent-Notes/02_Domain/01_domain_elements.md), [사용자 역할](KIS-Agent-Notes/02_Domain/02_user_roles.md), [정상·예외 업무 흐름](KIS-Agent-Notes/02_Domain/03_workflow.md)(정상 흐름 4개·예외 흐름 11개)
+- **03_Data_Event** — [데이터 구조 초안](KIS-Agent-Notes/03_Data_Event/01_data_structure.md), [데이터 소스](KIS-Agent-Notes/03_Data_Event/02_data_sources.md), [이벤트 카탈로그](KIS-Agent-Notes/03_Data_Event/03_event_catalog.md)(과거형 snake_case 도메인 이벤트 7개), [용어와 네이밍 컨벤션](KIS-Agent-Notes/03_Data_Event/04_naming_convention.md)
+- **04_Architecture** — [데이터 흐름](KIS-Agent-Notes/04_Architecture/01_data_flow.md), [아키텍처](KIS-Agent-Notes/04_Architecture/02_architecture.md)(텔레그램 → n8n 메인 워크플로우 + 서브 워크플로우 4개 → KIS 모의투자 Open API, 비용 낮은 순 검증)
+- **05_Scope** — [MVP 범위와 기능 우선순위](KIS-Agent-Notes/05_Scope/01_mvp_scope.md), [완료 기준과 체크리스트](KIS-Agent-Notes/05_Scope/02_definition_of_done.md)
+- **06_WBS** — [WBS — 개발 작업 분해](KIS-Agent-Notes/06_WBS/01_wbs.md), [5일 마일스톤과 위험](KIS-Agent-Notes/06_WBS/02_milestones.md)(2026-08-05~09 개발, 08-10 발표)
+- **07_GitHub** — [GitHub README 초안](KIS-Agent-Notes/07_GitHub/01_readme_draft.md), [2분 발표자료 초안](KIS-Agent-Notes/07_GitHub/02_presentation.md)
 
 ### CS지식
 - [AI 리터러시 & LLM 애플리케이션 입문](CS지식/LLM_APP입문.md)
