@@ -1,0 +1,1091 @@
+{
+  "name": "금융 뉴스 아침 브리핑",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -32,
+        144
+      ],
+      "id": "45d0843d-c4a0-4090-a373-886ad7c45fdf",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc",
+          "mode": "list",
+          "cachedResultName": "sent_history",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1088,
+        368
+      ],
+      "id": "c9a5e5ec-259a-43a2-a3ef-865018e8b74c",
+      "name": "Load History",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aF3Dx0EEqI3yHuY0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1312,
+        176
+      ],
+      "id": "31b43c67-cffa-43e6-b34e-b0c7cb0b7de9",
+      "name": "Merge History"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8899a89d-818d-4382-a0fe-ef9021df7ba0",
+              "leftValue": "={{ $json.items.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        176
+      ],
+      "id": "303b2f39-1399-4a4e-99e6-44a62bc8406d",
+      "name": "Has Articles?"
+    },
+    {
+      "parameters": {
+        "url": "https://www.yna.co.kr/rss/economy.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        -192
+      ],
+      "id": "d8cc5108-3661-4c63-a724-8679a08db860",
+      "name": "연합뉴스 RSS",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://www.chosun.com/arc/outboundfeeds/rss/category/economy/?outputType=xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        0
+      ],
+      "id": "930297c3-8390-495d-b214-0fe1fe2c0115",
+      "name": "조선일보 RSS",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://www.mk.co.kr/rss/30100041/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        192,
+        192
+      ],
+      "id": "64e30adb-c340-4e47-aaca-b85719639186",
+      "name": "매일경제 HTTP",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "63a53ca8-dd03-4a22-9d00-49d6cfacd66f",
+      "name": "매일경제 XML"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "rss.channel.item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        640,
+        192
+      ],
+      "id": "4d491108-3969-485d-830c-d41ac6404a70",
+      "name": "매일경제 Split"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        864,
+        -16
+      ],
+      "id": "22c662e3-71e0-40e3-89d9-3f7b4d976ddb",
+      "name": "Merge Feeds"
+    },
+    {
+      "parameters": {
+        "jsCode": "const crypto = require('crypto');\n\nconst TRACKING_PARAMS = new Set([\n  'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content',\n  'fbclid', 'gclid', 'igshid', 'ref', 'refer', 'from', 'cmpt_cd', 'sc_from'\n]);\n\nfunction normalizeUrl(rawUrl) {\n  let s = (rawUrl || '').toString().trim();\n\n  // 프래그먼트 제거\n  const hashIdx = s.indexOf('#');\n  if (hashIdx >= 0) s = s.slice(0, hashIdx);\n\n  // 쿼리 분리\n  let query = '';\n  const qIdx = s.indexOf('?');\n  if (qIdx >= 0) {\n    query = s.slice(qIdx + 1);\n    s = s.slice(0, qIdx);\n  }\n\n  // 스킴 분리 + 소문자화\n  const schemeMatch = s.match(/^([a-zA-Z][a-zA-Z0-9+.\\-]*):\\/\\//);\n  let scheme = '';\n  let rest = s;\n  if (schemeMatch) {\n    scheme = schemeMatch[1].toLowerCase();\n    rest = s.slice(schemeMatch[0].length);\n  }\n\n  // 호스트/경로 분리, 호스트만 소문자화 + www 제거\n  const slashIdx = rest.indexOf('/');\n  let host = slashIdx >= 0 ? rest.slice(0, slashIdx) : rest;\n  let path = slashIdx >= 0 ? rest.slice(slashIdx) : '';\n  host = host.toLowerCase().replace(/^www\\./, '');\n\n  // 끝 슬래시 제거\n  if (path.length > 1 && path.endsWith('/')) {\n    path = path.slice(0, -1);\n  }\n\n  // 쿼리: 추적 파라미터만 제거, 나머지는 키 기준 정렬\n  let normalizedQuery = '';\n  if (query) {\n    const pairs = query.split('&').filter(Boolean).map((pair) => {\n      const eqIdx = pair.indexOf('=');\n      const key = eqIdx >= 0 ? pair.slice(0, eqIdx) : pair;\n      const value = eqIdx >= 0 ? pair.slice(eqIdx + 1) : '';\n      return [key, value];\n    });\n    const kept = pairs.filter(([k]) => {\n      let decoded = k;\n      try { decoded = decodeURIComponent(k); } catch (e) {}\n      return !TRACKING_PARAMS.has(decoded.toLowerCase());\n    });\n    kept.sort((a, b) => a[0].localeCompare(b[0]));\n    normalizedQuery = kept.map(([k, v]) => (v ? `${k}=${v}` : k)).join('&');\n  }\n\n  let result = `${scheme}://${host}${path}`;\n  if (normalizedQuery) result += `?${normalizedQuery}`;\n  return result;\n}\n\nfunction sha256(text) {\n  return crypto.createHash('sha256').update(text, 'utf8').digest('hex');\n}\n\nfunction normalizeTitleKey(title) {\n  const cleaned = (title || '')\n    .toLowerCase()\n    .replace(/[\\s\\u3000]+/g, '')\n    .replace(/[\\[\\](){}'\"“”‘’.,!?…·\\-–—:;]/g, '');\n  return sha256(cleaned);\n}\n\nfunction detectSource(url) {\n  if (/yna\\.co\\.kr/i.test(url)) return '연합뉴스';\n  if (/chosun\\.com/i.test(url)) return '조선일보';\n  if (/mk\\.co\\.kr/i.test(url)) return '매일경제';\n  if (/edaily\\.co\\.kr/i.test(url)) return '이데일리';\n  return '기타';\n}\n\nfunction toKstString(pubDateRaw) {\n  const d = new Date(pubDateRaw);\n  if (isNaN(d.getTime())) return null;\n  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000);\n  return kst.toISOString().replace('T', ' ').slice(0, 19);\n}\n\nconst results = [];\nconst seenTitleKeys = new Set();\n\nfor (const item of $input.all()) {\n  const j = item.json;\n  const rawUrl = j.link || j.url || '';\n  if (!rawUrl) continue;\n\n  const title = (j.title || '').toString().trim();\n  const pubDateRaw = j.pubDate || j.isoDate || j.published_at || '';\n  const source = detectSource(rawUrl);\n\n  const snippetRaw = j.content || j.contentSnippet || j.description || title;\n  const snippet = snippetRaw\n    .toString()\n    .replace(/<[^>]+>/g, '')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&quot;/g, '\"')\n    .replace(/&amp;/g, '&')\n    .replace(/\\s+/g, ' ')\n    .trim()\n    .slice(0, 1000);\n\n  const url = normalizeUrl(rawUrl);\n  const article_id = sha256(url);\n  const title_key = normalizeTitleKey(title);\n\n  if (seenTitleKeys.has(title_key)) continue;\n  seenTitleKeys.add(title_key);\n\n  results.push({\n    json: { article_id, title_key, title, url, published_at: toKstString(pubDateRaw), source, snippet }\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        0
+      ],
+      "id": "f41e9ec3-9a3e-4676-b674-3e98c89a9f19",
+      "name": "Normalize"
+    },
+    {
+      "parameters": {
+        "jsCode": "const cutoff = new Date();\ncutoff.setDate(cutoff.getDate() - 7);\n\nconst all = $input.all();\n\n// 이력 행 판별: run_date 필드가 있으면 시트에서 읽은 이력, 없으면 오늘 수집한 기사\nconst isHistory = (item) => item.json.run_date !== undefined;\n\nconst historyIds = new Set(\n  all\n    .filter(isHistory)\n    .filter((item) => {\n      const d = new Date(item.json.run_date);\n      return isNaN(d.getTime()) ? true : d >= cutoff;\n    })\n    .map((item) => item.json.article_id)\n    .filter(Boolean)\n);\n\nconst articles = all.filter((item) => !isHistory(item));\n\nreturn articles.filter((item) => !historyIds.has(item.json.article_id));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1536,
+        176
+      ],
+      "id": "2aaaec4c-e51e-44b4-8d76-49d76aa76277",
+      "name": "Filter Seen"
+    },
+    {
+      "parameters": {
+        "jsCode": "const INCLUDE_KEYWORDS = [\n  // 증시\n  '코스피', '코스닥', '증시', '주가', '상장', '공모주', '배당', '시가총액', '나스닥', 'S&P',\n  // 금리·통화\n  '금리', '기준금리', '한국은행', '금통위', '연준', 'FOMC', '통화정책', '국채', '채권', '수익률',\n  // 환율\n  '환율', '원달러', '달러', '엔화', '위안화', '외환',\n  // 부동산\n  '부동산', '아파트값', '분양', '전세', '주택담보', '청약', 'LTV', 'DSR',\n  // 기업\n  '실적', '영업이익', '매출', '인수합병', 'M&A', '유상증자', '어닝', '상장폐지',\n  // 정책·거시\n  '물가', '소비자물가', 'CPI', 'GDP', '경기', '재정', '세제', '수출', '무역수지', '규제',\n  // 금융업\n  '은행', '증권', '보험', '펀드', 'ETF', '가상자산', '비트코인', '대출', '연체'\n];\n\nconst EXCLUDE_KEYWORDS = [\n  '연예', '아이돌', '드라마', '영화흥행', '스포츠', '야구', '축구', '골프', '날씨', '미세먼지',\n  '운세', '부고', '인사이동', '신간', '레시피', '여행후기'\n];\n\nfunction normalize(text) {\n  return (text || '').toString().toLowerCase().replace(/\\s+/g, '');\n}\n\nconst MAX_ARTICLES = 30;\n\nconst scored = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  const haystack = normalize(j.title) + normalize(j.snippet);\n\n  // 제외 키워드가 하나라도 매칭되면 즉시 탈락 (포함 키워드보다 우선)\n  if (EXCLUDE_KEYWORDS.some((kw) => haystack.includes(normalize(kw)))) continue;\n\n  const matched = INCLUDE_KEYWORDS.filter((kw) => haystack.includes(normalize(kw)));\n  if (matched.length === 0) continue; // 포함 키워드 0개면 탈락\n\n  scored.push({\n    json: {\n      ...j,\n      keyword_score: matched.length,\n      matched_keywords: matched.join(', ')\n    }\n  });\n}\n\nscored.sort((a, b) => b.json.keyword_score - a.json.keyword_score);\n\nif (scored.length > MAX_ARTICLES) {\n  console.log(`키워드 필터 통과 ${scored.length}건 중 상위 ${MAX_ARTICLES}건만 유지, ${scored.length - MAX_ARTICLES}건 절단`);\n}\n\nreturn scored.slice(0, MAX_ARTICLES);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        176
+      ],
+      "id": "c5878558-e61d-4706-aa57-4597addb62ab",
+      "name": "Keyword Filter"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        -48
+      ],
+      "id": "04167075-2dbd-4d78-8364-fa4d26d1275b",
+      "name": "Split Articles"
+    },
+    {
+      "parameters": {
+        "jsCode": "function isRobotsBlocked(url) {\n  // 조선일보: 부동산 섹션 차단\n  if (/chosun\\.com\\/economy\\/realty\\//i.test(url)) return true;\n  // 연합뉴스: 외국어판, cp= 파라미터 (경제 피드엔 현재 해당 없지만 방어적으로 유지)\n  if (/yna\\.co\\.kr\\/view\\/(AEN|AJP|ACK|AAR|ASP|AFR|AVI)/i.test(url)) return true;\n  if (/[?&]cp=/i.test(url)) return true;\n  return false;\n}\n\nreturn $input.all().map((item) => ({\n  json: { ...item.json, robots_blocked: isRobotsBlocked(item.json.url) }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        -48
+      ],
+      "id": "7b50b6fb-f35a-46cd-966e-bd9a2b44dd04",
+      "name": "Check Robots"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3552,
+        32
+      ],
+      "id": "f4da5e29-11b9-44bc-b2b0-76de91469f58",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e2c74fc9-4abb-4bb4-8418-326e5d9bf062",
+              "leftValue": "={{ $json.robots_blocked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2880,
+        -48
+      ],
+      "id": "a20c858b-eaad-4af9-b98f-95dfeedd5849",
+      "name": "Robots OK?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const MIN_LEN = 200;\nconst MAX_LEN = 3000;\n\nfunction stripTags(html) {\n  return html\n    .replace(/<script[\\s\\S]*?<\\/script>/gi, '')\n    .replace(/<style[\\s\\S]*?<\\/style>/gi, '')\n    .replace(/<[^>]+>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&quot;/g, '\"')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nfunction extractByContainer(html, marker, windowSize = 30000) {\n  const idx = html.indexOf(marker);\n  if (idx < 0) return '';\n  const region = html.slice(idx, idx + windowSize);\n  const matches = region.match(/<p[^>]*>[\\s\\S]*?<\\/p>/gi) || [];\n  return matches.map((p) => stripTags(p)).join(' ').trim();\n}\n\nfunction extractYna(html) {\n  return extractByContainer(html, 'story-news');\n}\n\nfunction extractMk(html) {\n  return extractByContainer(html, 'news_cnt_detail_wrap');\n}\n\nfunction extractEdaily(html) {\n  const m = html.match(/<div[^>]*itemprop=\"articleBody\"[^>]*>([\\s\\S]*?)<\\/div>\\s*<div/i);\n  return m ? stripTags(m[1]) : '';\n}\n\nfunction extractChosun(html) {\n  const start = html.indexOf('Fusion.globalContent=');\n  if (start < 0) return '';\n  const jsonStart = start + 'Fusion.globalContent='.length;\n  let depth = 0, inStr = false, esc = false, end = -1;\n  for (let p = jsonStart; p < html.length; p++) {\n    const ch = html[p];\n    if (esc) { esc = false; continue; }\n    if (ch === '\\\\') { esc = true; continue; }\n    if (ch === '\"') { inStr = !inStr; continue; }\n    if (inStr) continue;\n    if (ch === '{') depth++;\n    else if (ch === '}') { depth--; if (depth === 0) { end = p; break; } }\n  }\n  if (end < 0) return '';\n  try {\n    const obj = JSON.parse(html.slice(jsonStart, end + 1));\n    const texts = (obj.content_elements || []).filter((e) => e.type === 'text').map((e) => e.content);\n    return stripTags(texts.join(' '));\n  } catch (e) {\n    return '';\n  }\n}\n\nfunction extractBody(source, html) {\n  if (!html) return '';\n  switch (source) {\n    case '연합뉴스': return extractYna(html);\n    case '매일경제': return extractMk(html);\n    case '이데일리': return extractEdaily(html);\n    case '조선일보': return extractChosun(html);\n    default: return '';\n  }\n}\n\nconst results = [];\nlet fulltextCount = 0;\nlet skipCount = 0;\n\nfor (const item of $input.all()) {\n  const { data, ...j } = item.json; \n  let body = '';\n  let body_source = '';\n\n  if (j.robots_blocked) {\n    body_source = 'robots_skip';\n    skipCount++;\n  } else {\n    const html = data || j.body || '';\n    const extracted = extractBody(j.source, html);\n    if (extracted && extracted.length >= MIN_LEN) {\n      body = extracted;\n      body_source = 'fulltext';\n      fulltextCount++;\n    }\n  }\n\n  if (!body) {\n    const isTitleOnly = !j.snippet || j.snippet.trim() === (j.title || '').trim();\n    body = j.snippet || j.title || '';\n    if (body_source !== 'robots_skip') {\n      body_source = isTitleOnly ? 'title_only' : 'rss_text';\n    }\n  }\n\n  body = body.slice(0, MAX_LEN);\n\n  results.push({\n    json: {\n      ...j,\n      body,\n      body_source,\n      body_len: body.length,\n      needs_review: body_source === 'title_only' ? true : (j.needs_review || false)\n    }\n  });\n}\n\nconst denom = results.length - skipCount;\nconst ratio = denom > 0 ? fulltextCount / denom : 1;\nif (ratio < 0.5) {\n  console.log(`본문 추출률 저하: ${Math.round(ratio * 100)}% (fulltext ${fulltextCount}/${denom})`);\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3776,
+        32
+      ],
+      "id": "5146b431-8058-4acf-9315-abefe626a6e4",
+      "name": "Extract Body"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1984,
+        176
+      ],
+      "id": "16edfdec-eed6-4aad-adff-e0367f471a6c",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 5
+            }
+          },
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        3104,
+        -64
+      ],
+      "id": "814fff4f-f762-4681-a9b9-ee3a05a1a878",
+      "name": "Fetch Article",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3328,
+        -64
+      ],
+      "id": "cffda78a-6baa-4239-93f7-9c7d086073d6",
+      "name": "Merge Fetch Data"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "maxOutputTokens": 4096
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        4080,
+        304
+      ],
+      "id": "efda9787-dca6-4dd8-a973-10ef0ac42189",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "I53Jz2DepobPs41B",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=제목: {{ $json.title }}\n매체: {{ $json.source }}\n발행: {{ $json.published_at }}\n본문: {{ $json.body }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=당신은 자산운용사 리서치팀의 뉴스 분석 담당자입니다.\n입력된 기사 하나를 읽고 JSON으로만 응답하세요.\n\n[summary]\n- 3문장 이하의 한국어 평서문으로 작성합니다.\n- 기사에 실제로 적힌 사실만 씁니다. 추정, 전망, 투자 의견을 덧붙이지 마세요.\n- 수치(금액, 비율, 지수)가 있으면 반드시 포함합니다.\n- \"~에 따르면\", \"기사에 의하면\" 같은 군더더기를 쓰지 마세요.\n\n[importance] 아래 기준으로 1~5의 정수를 부여합니다.\n5 : 시장 전체를 흔드는 사건. 기준금리 결정, 대형 정책 발표, 지수 급락·급등\n4 : 특정 업종이나 대형 기업에 직접 영향. 실적 발표, 대형 인수합병\n3 : 참고할 만한 동향. 경제지표 발표, 업계 전망\n2 : 일반적인 소식\n1 : 브리핑에 넣을 필요 없는 기사 (금융과 무관하거나 정보 가치가 없음)\n\n판단이 애매하면 낮은 쪽을 선택합니다. 브리핑은 4점 이상만 발송되므로,\n확신이 없는 기사를 4점으로 올리는 것보다 3점으로 두는 편이 낫습니다.\n\n[category] 다음 7개 중 정확히 하나를 고릅니다.\n증시 / 금리 / 환율 / 부동산 / 기업 / 정책 / 기타\n어디에도 명확히 속하지 않으면 \"기타\"를 씁니다.\n\n[llm_needs_review]\n기사 내용이 불충분해 요약을 신뢰하기 어렵거나(본문이 제목뿐인 경우 등),\n위 지시를 지킬 수 없었다면 true, 정상 처리했다면 false를 반환합니다.\n\n다음은 스키마 설명이 아니라, 당신이 실제로 반환해야 할 응답의 정확한 예시입니다.\n반드시 아래와 똑같은 키만 사용하고, 값만 실제 기사 내용에 맞게 바꿔서 반환하세요.\n\n{\"summary\": \"금통위가 기준금리를 3.0%로 동결했다. 물가 안정세를 확인했으나 가계부채를 우려한 결정으로 해석된다.\", \"importance\": 3, \"category\": \"금리\", \"llm_needs_review\": false}\n\n반드시 지킬 것:\n- summary, importance, category, llm_needs_review 4개 키만 있는 평평한 JSON 객체 하나만 반환합니다.\n- \"type\", \"properties\", \"enum\", \"minimum\", \"maximum\", \"description\", \"required\" 같은 단어는 절대 응답에 포함하지 마세요. 이 단어들은 스키마를 설명할 때 쓰는 용어이지, 당신이 반환할 내용이 아닙니다.\n- 코드블록(```)이나 다른 설명 문장 없이 JSON 객체만 출력합니다."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        4000,
+        80
+      ],
+      "id": "11558491-babb-4035-8c0a-77638b7fb421",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        4352,
+        32
+      ],
+      "id": "2eaab6e3-9c9a-479d-ad12-e51b11f41808",
+      "name": "Merge LLM Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "function parseModelText(raw) {\n  if (!raw || typeof raw !== 'string') return null;\n  let cleaned = raw.trim()\n    .replace(/^```json\\s*/i, '')\n    .replace(/^```\\s*/, '')\n    .replace(/```$/, '')\n    .trim();\n  try {\n    return JSON.parse(cleaned);\n  } catch (e) {\n    const start = cleaned.indexOf('{');\n    const end = cleaned.lastIndexOf('}');\n    if (start >= 0 && end > start) {\n      try { return JSON.parse(cleaned.slice(start, end + 1)); } catch (e2) { return null; }\n    }\n    return null;\n  }\n}\n\nconst ALLOWED_CATEGORIES = ['증시', '금리', '환율', '부동산', '기업', '정책', '기타'];\n\nfunction splitSentences(text) {\n  return (text || '').match(/[^.!?]*[.!?]+|[^.!?]+$/g)?.map((s) => s.trim()).filter(Boolean) || [];\n}\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const { text, ...j } = item.json; // 필드명이 다르면 여기만 수정\n  const parsed = parseModelText(text);\n\n  const llmFailed = !parsed || parsed.summary === undefined || parsed.importance === undefined || parsed.category === undefined;\n  if (llmFailed) {\n    results.push({ json: { ...j, status: 'llm_error', needs_review: true } });\n    continue;\n  }\n\n  let corrected = false;\n\n  let importance = Number(parsed.importance);\n  if (!Number.isInteger(importance) || importance < 1 || importance > 5) {\n    importance = 3;\n    corrected = true;\n  }\n\n  let category = parsed.category;\n  if (!ALLOWED_CATEGORIES.includes(category)) {\n    category = '기타';\n    corrected = true;\n  }\n\n  let summary = (parsed.summary || '').trim();\n  if (!summary) {\n    summary = j.title || '';\n    corrected = true;\n  } else {\n    const sentences = splitSentences(summary);\n    if (sentences.length > 3) {\n      summary = sentences.slice(0, 3).join(' ');\n      corrected = true;\n    }\n  }\n\n  const needs_review = j.needs_review === true || parsed.llm_needs_review === true || corrected;\n\n  results.push({ json: { ...j, summary, importance, category, needs_review } });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4576,
+        32
+      ],
+      "id": "9214585c-4579-45f0-9e88-70cd8c79d827",
+      "name": "Validate LLM Output"
+    },
+    {
+      "parameters": {
+        "jsCode": "const ALL = $input.all();\n\nlet collected = 0, deduped = 0, financial = 0;\ntry { collected = $('Merge Feeds').all().length; } catch (e) {}\ntry { deduped = $('Filter Seen').all().length; } catch (e) {}\ntry { financial = $('Keyword Filter').all().length; } catch (e) {}\n\nconst sourceCounts = {};\nfor (const item of ALL) {\n  const s = item.json.source || '기타';\n  sourceCounts[s] = (sourceCounts[s] || 0) + 1;\n}\nconst sourceLine = Object.entries(sourceCounts).map(([k, v]) => `${k} ${v}`).join(' / ') || '없음';\n\nconst nonSkipped = ALL.filter((i) => i.json.body_source !== 'robots_skip');\nconst fulltextCount = nonSkipped.filter((i) => i.json.body_source === 'fulltext').length;\nconst fulltextRatio = nonSkipped.length > 0 ? fulltextCount / nonSkipped.length : 1;\n\nconst important = ALL.filter((i) => Number(i.json.importance) >= 4);\nimportant.sort((a, b) => {\n  if (b.json.importance !== a.json.importance) return b.json.importance - a.json.importance;\n  return new Date(b.json.published_at) - new Date(a.json.published_at);\n});\n\nfunction todayKst() {\n  const now = new Date();\n  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);\n  return kst.toISOString().slice(0, 10);\n}\n\nconst MAX_MESSAGE_CHARS = 1900; // 디스코드 2000자 제한에 여유\n\nconst footerLines = ['──────────────'];\nfooterLines.push(`수집 ${collected}건 → 신규 ${deduped}건 → 금융 ${financial}건 → 중요 ${important.length}건`);\nfooterLines.push(`매체: ${sourceLine}`);\nif (fulltextRatio < 0.5) {\n  footerLines.push(`⚠️ 본문 추출률 저하 (${Math.round(fulltextRatio * 100)}%) — 선택자 점검 필요`);\n}\nconst footerText = footerLines.join('\\n');\n\nlet bodyLines = [];\nlet shownCount = 0;\n\nif (important.length > 0) {\n  const headerLines = [`📈 오늘의 금융 브리핑 (${todayKst()})`, `읽을 기사 ${important.length}건`, ''];\n\n  for (const item of important) {\n    const j = item.json;\n    const flag = j.needs_review ? ' ⚠️' : '';\n    const articleLines = [\n      `[${shownCount + 1}] ${j.category} | ${j.title}${flag}`,\n      `    ${j.summary}`,\n      `    🔗 ${j.url}`,\n      ''\n    ];\n\n    const candidate = [...headerLines, ...bodyLines, ...articleLines].join('\\n');\n    const reserve = footerText.length + 100; // 생략 안내 문구 여유분\n\n    if (candidate.length + reserve > MAX_MESSAGE_CHARS) break;\n\n    bodyLines.push(...articleLines);\n    shownCount++;\n  }\n\n  const dropped = important.length - shownCount;\n  const noteLines = dropped > 0\n    ? [`※ 중요 기사가 ${important.length}건이라 상위 ${shownCount}건만 표시, ${dropped}건 생략됨`, '']\n    : [];\n\n  const messageText = [...headerLines, ...bodyLines, ...noteLines, footerText].join('\\n');\n  const shownIds = new Set(important.slice(0, shownCount).map((i) => i.json.article_id));\n\n  return [{\n    json: {\n      message_text: messageText,\n      has_important: true,\n      important_count: important.length,\n      all_articles: ALL.map((i) => ({ ...i.json, sent_in_message: shownIds.has(i.json.article_id) }))\n    }\n  }];\n} else {\n  const headerLines = [\n    `📭 오늘의 금융 브리핑 (${todayKst()})`,\n    '중요 기사 없음', '',\n    '오늘 수집된 기사 중 브리핑 기준(중요도 4 이상)을 넘는 기사가 없었습니다.',\n    '시스템은 정상 동작했습니다.', ''\n  ];\n  const messageText = [...headerLines, footerText].join('\\n');\n\n  return [{\n    json: {\n      message_text: messageText,\n      has_important: false,\n      important_count: 0,\n      all_articles: ALL.map((i) => ({ ...i.json, sent_in_message: false }))\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4800,
+        32
+      ],
+      "id": "f7d44fb1-fb42-467f-b33f-d0235ccdf1ec",
+      "name": "Build Message"
+    },
+    {
+      "parameters": {
+        "jsCode": "let dedupedItems = [];\ntry { dedupedItems = $('Filter Seen').all(); } catch (e) {}\n\nlet collected = 0;\ntry { collected = $('Merge Feeds').all().length; } catch (e) {}\n\nconst sourceCounts = {};\nfor (const item of dedupedItems) {\n  const s = item.json.source || '기타';\n  sourceCounts[s] = (sourceCounts[s] || 0) + 1;\n}\nconst sourceLine = Object.entries(sourceCounts).map(([k, v]) => `${k} ${v}`).join(' / ') || '없음';\n\nfunction todayKst() {\n  const now = new Date();\n  const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000);\n  return kst.toISOString().slice(0, 10);\n}\n\nconst lines = [];\nlines.push(`📭 오늘의 금융 브리핑 (${todayKst()})`);\nlines.push('중요 기사 없음');\nlines.push('');\nlines.push('오늘 수집된 기사 중 금융 관련 기사가 없었습니다.');\nlines.push('시스템은 정상 동작했습니다.');\nlines.push('');\nlines.push('──────────────');\nlines.push(`수집 ${collected}건 → 신규 ${dedupedItems.length}건 → 금융 0건 → 중요 0건`);\nlines.push(`매체: ${sourceLine}`);\n\nreturn [{\n  json: {\n    message_text: lines.join('\\n'),\n    has_important: false,\n    important_count: 0,\n    all_articles: []\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4800,
+        368
+      ],
+      "id": "b510239f-6124-492f-8b88-ba67b2c00bd4",
+      "name": "Build Empty Message"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "={{ $json.message_text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        5024,
+        80
+      ],
+      "id": "932faf2b-cd7b-4715-bfca-52327717df8d",
+      "name": "Send Briefing",
+      "webhookId": "8aadb7bc-9461-4aba-ab55-6dc8c26ee613",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "pay0y4DF5r7LiWo8",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "function todayKst() {\n  const now = new Date();\n  return new Date(now.getTime() + 9 * 60 * 60 * 1000);\n}\n\nconst kst = todayKst();\nconst run_date = kst.toISOString().slice(0, 10);\nconst run_at = kst.toISOString().replace('T', ' ').slice(0, 19);\nconst execution_id = $execution.id;\n\nconst rows = [];\n\nfor (const item of $input.all()) {\n  const articles = item.json.all_articles || [];\n  for (const a of articles) {\n    let status = a.status; // llm_error면 Validate 단계에서 이미 붙어있음\n    if (!status) {\n      status = a.sent_in_message ? 'sent' : 'not_sent';\n    }\n\n    rows.push({\n      json: {\n        article_id: a.article_id,\n        title_key: a.title_key,\n        run_date,\n        run_at,\n        source: a.source,\n        title: a.title,\n        url: a.url,\n        published_at: a.published_at,\n        category: a.category || '',\n        importance: a.importance !== undefined ? a.importance : '',\n        summary: a.summary || '',\n        needs_review: !!a.needs_review,\n        body_source: a.body_source || '',\n        body_len: a.body_len !== undefined ? a.body_len : '',\n        status,\n        execution_id\n      }\n    });\n  }\n}\n\nreturn rows;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5024,
+        368
+      ],
+      "id": "bb8a7c4e-017f-48d6-88d5-5c40bcea7110",
+      "name": "Prepare History Rows"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc",
+          "mode": "list",
+          "cachedResultName": "sent_history",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11qMOU7yiEaupq_tapHEVmNlJuiRFI_IQJfJ1mWQCKcc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "article_id",
+              "displayName": "article_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title_key",
+              "displayName": "title_key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "run_date",
+              "displayName": "run_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "run_at",
+              "displayName": "run_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "published_at",
+              "displayName": "published_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "needs_review",
+              "displayName": "needs_review",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "body_source",
+              "displayName": "body_source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "body_len",
+              "displayName": "body_len",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "execution_id",
+              "displayName": "execution_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        5248,
+        368
+      ],
+      "id": "0675fe32-8ce5-4240-9b8e-21033b221e50",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aF3Dx0EEqI3yHuY0",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "연합뉴스 RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "매일경제 HTTP",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "조선일보 RSS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Load History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load History": {
+      "main": [
+        [
+          {
+            "node": "Merge History",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge History": {
+      "main": [
+        [
+          {
+            "node": "Filter Seen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Articles?": {
+      "main": [
+        [
+          {
+            "node": "Split Articles",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Empty Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "연합뉴스 RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "조선일보 RSS": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "매일경제 HTTP": {
+      "main": [
+        [
+          {
+            "node": "매일경제 XML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "매일경제 XML": {
+      "main": [
+        [
+          {
+            "node": "매일경제 Split",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "매일경제 Split": {
+      "main": [
+        [
+          {
+            "node": "Merge Feeds",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge Feeds": {
+      "main": [
+        [
+          {
+            "node": "Normalize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [
+          {
+            "node": "Merge History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Seen": {
+      "main": [
+        [
+          {
+            "node": "Keyword Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword Filter": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Articles": {
+      "main": [
+        [
+          {
+            "node": "Check Robots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Robots": {
+      "main": [
+        [
+          {
+            "node": "Robots OK?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Robots OK?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Article",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Fetch Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Extract Body",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Has Articles?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Article": {
+      "main": [
+        [
+          {
+            "node": "Merge Fetch Data",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Fetch Data": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Body": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge LLM Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarize",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Merge LLM Output",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge LLM Output": {
+      "main": [
+        [
+          {
+            "node": "Validate LLM Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate LLM Output": {
+      "main": [
+        [
+          {
+            "node": "Build Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Empty Message": {
+      "main": [
+        [
+          {
+            "node": "Send Briefing",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare History Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Message": {
+      "main": [
+        [
+          {
+            "node": "Send Briefing",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepare History Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare History Rows": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "AfOaURUU2dJomVgE",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "0498cd8a-50eb-454d-80f9-5b944fbc7c75",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5808a9f3d7ce049cd3c54d6fdeece7e1d531ce0c16b62b796f669cd52ce39307"
+  },
+  "nodeGroups": [],
+  "id": "lrdgIr17CNHfUUbU",
+  "tags": []
+}
