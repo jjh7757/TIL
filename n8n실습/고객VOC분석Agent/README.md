@@ -115,7 +115,7 @@ Gemini 3.5 Flash에 `category / sentiment / urgency / summary / needs_review` 5�
 
 ### REQ-05 · 검증 안전판
 
-LLM 출력이 계약(허용값/타입/길이)을 어겨도 워크플로우가 죽지 않도록 Code 노드로 방어했다. 위반 시 `urgency`는 안전한 기본값 `중`으로, `needs_review`는 `true`로 강제하며, 검증 실패건도 그대로 저장 단계로 넘긴다 (검증 코드 스케치는 [기획서.md](기획서.md#req-05-검증-안전판) REQ-05 참조).
+LLM 출력이 계약(허용값/타입/길이)을 어겨도 워크플로우가 죽지 않도록 Code 노드로 방어했다. 위반 시 `urgency`는 안전한 기본값 `중`으로, `needs_review`는 `true`로 강제하며, 검증 실패건도 그대로 저장 단계로 넘긴다 (전체 코드는 [검증안전판.js](검증안전판.js) 참조).
 
 - 코드펜스 제거 후 JSON 파싱, 파싱 실패 시 위반 처리
 - `category`/`sentiment`/`urgency` 허용값 검사
@@ -168,9 +168,11 @@ n8n Code 노드의 **Mode(Run Once for All Items / Each Item)** 와 **pairedItem
 
 - Google Form: https://forms.gle/Gji14yQz9qagbVd69
 - 스프레드시트 (`폼 응답1`, `분석결과`): https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit?usp=sharing
+- [`workflow.json`](workflow.json) — n8n 워크플로우 export (Credential 값 미포함 확인)
 - [prompt.md](prompt.md) — LLM 프롬프트 원문
+- [검증안전판.js](검증안전판.js) — REQ-05 검증 코드
 - [테스트결과.md](테스트결과.md) — TC-01~10 결과 및 이슈 기록
-- [기획서.md](기획서.md) — 기획 및 설계 문서 (REQ-05 검증 안전판 코드 스케치 포함)
+- [기획서.md](기획서.md) — 기획 및 설계 문서
 - [체크리스트.md](체크리스트.md) — 단계별 구축 체크리스트
 
 ## 8. 회고

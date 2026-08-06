@@ -1,0 +1,628 @@
+{
+  "name": "mini1",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8",
+          "mode": "list",
+          "cachedResultName": "VOC_고객문의_자동분류",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1922083722,
+          "mode": "list",
+          "cachedResultName": "폼 응답1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit#gid=1922083722"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        160,
+        160
+      ],
+      "id": "21b7caa0-0391-4c21-8020-3cf82ef895dd",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "D1pXLeHZoxAAtI4w",
+          "name": "Google Sheets Trigger account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8",
+          "mode": "list",
+          "cachedResultName": "VOC_고객문의_자동분류",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1016867499,
+          "mode": "list",
+          "cachedResultName": "분석결과",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit#gid=1016867499"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        576,
+        144
+      ],
+      "id": "06b858f5-b062-49d7-8bf5-5dede905ea95",
+      "name": "Get row(s) in sheet",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aF3Dx0EEqI3yHuY0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4f0a048b-1b35-42d1-867b-7a5cae5f55fe",
+              "leftValue": "={{ $json.isDuplicate }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1008,
+        144
+      ],
+      "id": "cac32367-e372-4034-8292-a8957c6fdfe9",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const originals = $('정규화').all();\nconst rowsInput = $input.all();\n\nreturn originals.map((orig, idx) => {\n  const currentKey = orig.json['중복키'];\n  const isDuplicate = rowsInput.some(r => (r.json['중복키'] || '') === currentKey);\n\n  return {\n    json: { ...orig.json, isDuplicate },\n    pairedItem: { item: idx },\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        144
+      ],
+      "id": "f83f48cf-7918-4283-b0c2-0f17cf6044af",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nconst email = ($json['이메일'] || '').trim().toLowerCase();\nconst itemNo = ($json['물품 번호'] || '').toString().replace(/\\D/g, '');\nconst type = ($json['문의유형'] || '').trim();\n\nconst dedupeKey = `${email}|${itemNo}|${type}`;\n\nreturn {\n  json: {\n    ...$json,\n    이메일_norm: email,\n    물품번호_norm: itemNo,\n    문의유형_norm: type,\n    중복키: dedupeKey,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        144
+      ],
+      "id": "8edad341-bffe-4514-9144-d1da5e648410",
+      "name": "정규화"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1232,
+        48
+      ],
+      "id": "e3a85038-20da-45de-9189-5fa88b5894c7",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=당신은 종합 쇼핑몰의 고객문의 분류 담당자입니다.\n아래 문의내용을 읽고 반드시 JSON만 출력하세요. 설명·머리말·코드펜스를 붙이지 마세요.\n\n[출력 필드]\n- category: 결제 / 계정 / 상품 / 배송 / 기타 중 하나\n- sentiment: 긍정 / 중립 / 부정 중 하나\n- urgency: 상 / 중 / 하 중 하나\n- summary: 80자 이하 한국어 한 문장\n- needs_review: 판단이 모호하면 true, 아니면 false\n\n[긴급도 판정 기준]\n- 상: 서비스를 못 쓰는 상태 / 금전적 피해 발생 / 법적 대응이나 언론 제보 언급 / 명시적 환불 요구\n- 중: 불편하지만 사용은 가능 / 문의 및 개선 요청\n- 하: 단순 질문 / 칭찬 / 정보 확인\n\n[판단 원칙]\n- 어느 유형에도 명확히 속하지 않으면 category는 \"기타\"로 둔다.\n- 긴급도는 감정의 세기가 아니라 위 기준의 사실 여부로 판정한다.\n  (말투가 거칠어도 단순 질문이면 \"하\")\n- 여러 기준에 걸치면 더 높은 긴급도를 택한다.\n\n[문의내용]\n{{ $json.문의내용 }}\n\n\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1232,
+        240
+      ],
+      "id": "8712ad04-8141-4f65-ba24-80f269b327d8",
+      "name": "Basic LLM Chain",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        448
+      ],
+      "id": "0c78dffe-65c2-4870-a66a-092b1847fd68",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "I53Jz2DepobPs41B",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"category\": \"배송\",\n  \"sentiment\": \"부정\",\n  \"urgency\": \"상\",\n  \"summary\": \"배송이 지연되어 불만을 제기함\",\n  \"needs_review\": false\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1376,
+        448
+      ],
+      "id": "919b781c-4c4d-4b37-b755-098908159321",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const ALLOW = {\n  category: ['결제', '계정', '상품', '배송', '기타'],\n  sentiment: ['긍정', '중립', '부정'],\n  urgency: ['상', '중', '하'],\n};\n\nlet raw = $json.output ?? '';\nlet parsed = {};\nlet violated = false;\n\ntry {\n  if (typeof raw === 'object' && raw !== null) parsed = raw;\n  else parsed = JSON.parse(String(raw).replace(/```(json)?/g, '').trim());\n} catch (e) {\n  violated = true;\n}\n\nconst pick = (key, fallback) => {\n  const v = typeof parsed[key] === 'string' ? parsed[key].trim() : parsed[key];\n  if (!ALLOW[key].includes(v)) { violated = true; return fallback; }\n  return v;\n};\n\nconst result = {\n  category:  pick('category', '기타'),\n  sentiment: pick('sentiment', '중립'),\n  urgency:   pick('urgency', '중'),\n  summary:   String(parsed.summary ?? '').slice(0, 80),\n  needs_review: parsed.needs_review === true,\n};\n\nif (typeof parsed.summary !== 'string' || parsed.summary.length > 80) violated = true;\nif (typeof parsed.needs_review !== 'boolean') violated = true;\n\nif (violated) { result.urgency = '중'; result.needs_review = true; }\n\nreturn { json: { ...$json, ...result } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1600,
+        240
+      ],
+      "id": "7565a372-634d-4a9f-9f42-0ca32b0ffe1b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8",
+          "mode": "list",
+          "cachedResultName": "VOC_고객문의_자동분류",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1016867499,
+          "mode": "list",
+          "cachedResultName": "분석결과",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-720m8DSD4Vzb3-0dehyTR1b5en16vbjMx0FsBEnbe8/edit#gid=1016867499"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "접수시각": "={{ $('Code in JavaScript1').item.json.타임스탬프 }}",
+            "물품번호": "={{ $('Code in JavaScript1').item.json['물품 번호'] }}",
+            "고객선택유형": "={{ $('Code in JavaScript1').item.json['문의유형'] }}",
+            "문의내용": "={{ $('Code in JavaScript1').item.json['문의내용'] }}",
+            "중복키": "={{ $('Code in JavaScript1').item.json['중복키'] }}",
+            "유형일치": "={{ $('Code in JavaScript1').item.json.문의유형_norm === $json.category }}",
+            "처리시각": "={{ $now }}",
+            "이메일": "={{ $('Code in JavaScript1').item.json['이메일'] }}",
+            "category": "={{ $json.category }}",
+            "sentiment": "={{ $json.sentiment }}",
+            "urgency": "={{ $json.urgency }}",
+            "summary": "={{ $json.summary }}",
+            "needs_review": "={{ $json.needs_review }}",
+            "알림발송": "={{ $json.urgency === '상' }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "접수시각",
+              "displayName": "접수시각",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "처리시각",
+              "displayName": "처리시각",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "물품번호",
+              "displayName": "물품번호",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "이메일",
+              "displayName": "이메일",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "고객선택유형",
+              "displayName": "고객선택유형",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "문의내용",
+              "displayName": "문의내용",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sentiment",
+              "displayName": "sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "urgency",
+              "displayName": "urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "needs_review",
+              "displayName": "needs_review",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "유형일치",
+              "displayName": "유형일치",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "중복키",
+              "displayName": "중복키",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "알림발송",
+              "displayName": "알림발송",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1824,
+        240
+      ],
+      "id": "f6cc210b-e3dd-4633-bf03-59a3ec27a0d6",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "aF3Dx0EEqI3yHuY0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a8522c0-8246-45e8-ab3d-e1add02edf37",
+              "leftValue": "={{ $json.urgency }}",
+              "rightValue": "상",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2000,
+        240
+      ],
+      "id": "38d2b0fb-bd4b-494c-a377-fa60bfd663d4",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=🚨 긴급 VOC 접수\n\n물품번호: {{ $json.물품번호 }}\n긴급도: {{ $json.urgency }}\n감정: {{ $json.sentiment }}\n이메일: {{ $json.이메일 }}\n문의내용: {{ $('Code in JavaScript1').item.json.문의내용.slice(0, 900) }}\n요약: {{ $json.summary }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        2224,
+        144
+      ],
+      "id": "4185b541-d49d-418c-9edc-193c96ad4e7d",
+      "name": "Discord",
+      "webhookId": "2fb38123-8861-4ebb-bbb7-6a8c5224bda4",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "pay0y4DF5r7LiWo8",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        336
+      ],
+      "id": "14610830-d7e5-472d-8288-792887c6d874",
+      "name": "No Operation, do nothing1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "정규화",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "정규화": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Discord",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "a245857c-abbd-4a4f-a6c2-3d5532c5fdfe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5808a9f3d7ce049cd3c54d6fdeece7e1d531ce0c16b62b796f669cd52ce39307"
+  },
+  "nodeGroups": [],
+  "id": "qLvIFqXoTimAPC0W",
+  "tags": []
+}
