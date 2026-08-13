@@ -25,7 +25,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-08 | [왜샀어(WhyBuy) — 근거를 남겨야 완료되는 모의투자 서비스](vercel실습/왜샀어/왜샀어구현.md) — KIS 모의투자 API로 실제 매수·매도 주문을 내되 판단 근거를 강제하는 Next.js 웹 서비스. 초당 1건 레이트리밋 해결, 지정가 주문 도입에 따른 상태 모델 재설계, AI 해석 안전장치, 공유 모의계좌의 자본시장법상 리스크 검토까지 정리 |
 | 2026-08-10 | [왜샀어 발표자료](vercel실습/왜샀어/왜샀어_발표.pptx) — 왜샀어(WhyBuy) 프로젝트 발표용 pptx |
 | 2026-08-11 | [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문 7개 주제 정리 |
-| 2026-08-12 | [Docker로 n8n 셀프호스팅하고 Telegram 웹훅 연동하기](n8n실습/Docker로n8n셀프호스팅하기.md) — Windows Home + WSL2 + Docker Desktop 설치 트러블슈팅, ngrok으로 로컬 웹훅 공개, ngrok vs Cloudflare Tunnel 비교, [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 이미지·레지스트리·배포 대상(Cloud Run/K8s/VM/PaaS)·Docker Compose 개념 정리 |
+| 2026-08-12 | [Docker로 n8n 셀프호스팅하고 Telegram 웹훅 연동하기](n8n실습/Docker로n8n셀프호스팅하기.md) — Windows Home + WSL2 + Docker Desktop 설치 트러블슈팅, ngrok으로 로컬 웹훅 공개, ngrok vs Cloudflare Tunnel 비교, [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 이미지·레지스트리·배포 대상(Cloud Run/K8s/VM/PaaS)·Docker Compose 개념 정리, [왜샀어 Docker 배포 전환 기획서](https://github.com/jjh7757/whybuy/blob/master/KIS-Web-Agent-Notes/08_Deploy/01_docker_migration.md) — 서버리스에서 상주 프로세스로 옮겨 KIS 레이트리밋 큐 단일성·체결 확인 스케줄러 한계를 해소하는 이관 계획 (whybuy 저장소) |
 
 ## 목차
 
