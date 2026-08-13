@@ -26,6 +26,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-10 | [왜샀어 발표자료](vercel실습/왜샀어/왜샀어_발표.pptx) — 왜샀어(WhyBuy) 프로젝트 발표용 pptx |
 | 2026-08-11 | [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문 7개 주제 정리 |
 | 2026-08-12 | [Docker로 n8n 셀프호스팅하고 Telegram 웹훅 연동하기](n8n실습/Docker로n8n셀프호스팅하기.md) — Windows Home + WSL2 + Docker Desktop 설치 트러블슈팅, ngrok으로 로컬 웹훅 공개, ngrok vs Cloudflare Tunnel 비교, [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 이미지·레지스트리·배포 대상(Cloud Run/K8s/VM/PaaS)·Docker Compose 개념 정리, [왜샀어 Docker 배포 전환 기획서](https://github.com/jjh7757/whybuy/blob/master/KIS-Web-Agent-Notes/08_Deploy/01_docker_migration.md) — 서버리스에서 상주 프로세스로 옮겨 KIS 레이트리밋 큐 단일성·체결 확인 스케줄러 한계를 해소하는 이관 계획 (whybuy 저장소) |
+| 2026-08-13 | [파이썬 기초](CS지식/파이썬기초/README.md) 문자열·집합과 튜플·딕셔너리·함수·모듈 5개 주제 추가 — 문자열 포매팅과 메서드, 집합 연산과 튜플, 딕셔너리 키-밸류 조작, 함수의 구조와 내장함수, math·random·collections·itertools 표준 모듈 |
 
 ## 목차
 
@@ -89,5 +90,5 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [웹 서비스 구조](CS지식/웹서비스구조.md) — Client-Server(FE/BE) 구조, HTTP(요청/응답)와 API 통신 정리
 - [웹 디자인 기초](CS지식/웹디자인기초.md) — 화면 설계 전 방향을 잡는 무드보드(Pinterest 활용법·AI로 디자인 시스템/프로토타입 뽑는 프롬프트 예시 포함), 미디어 쿼리·뷰포트 기반 반응형 웹과 모바일 퍼스트 전략 비교
 - [RSS 기초](CS지식/RSS기초.md) — RSS 동작 방식과 예시 구조, 알고리즘 없이 구독하는 장점, 웹훅과의 pull/push 차이
-- [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문 7개 주제 정리
+- [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문·문자열·집합과 튜플·딕셔너리·함수·모듈 12개 주제 정리
 - [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 컨테이너 vs VM, Dockerfile·이미지·레지스트리 흐름, 배포 대상(관리형 컨테이너 서비스/쿠버네티스/VM/PaaS) 비교, Docker Compose
