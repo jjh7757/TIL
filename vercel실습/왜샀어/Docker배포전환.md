@@ -117,3 +117,80 @@ Oracle Cloud Free Tier로 진행하려 했으나 **가입 화면의 홈 리전 �
 
 - Google: `https://whybuy.ai-agent-develop.cloud/auth/callback` 추가 (기존 Vercel URI는 롤백 대비로 유지)
 - Supabase: Authentication → URL Configuration → Site URL 갱신, Redirect URLs에 `https://whybuy.ai-agent-develop.cloud/**` 추가 (Vercel URI 유지)
+
+### 6단계 — 실제 환경변수로 컨테이너 재기동
+
+**따옴표 함정**: `.env.production`에 값을 `KEY="value"` 형태로 따옴표를 붙여 채웠는데, `docker --env-file`은 bash와 달리 따옴표를 자동으로 벗겨주지 않는다. `docker build --build-arg`는 bash `source .env`를 거쳐서 넘겼기 때문에 문제없었지만(bash가 따옴표를 정상 처리), 순수 런타임 변수(`GEMINI_API_KEY` 등)는 따옴표 문자까지 값에 포함된 채로 컨테이너에 들어갈 뻔했다 — 전부 따옴표 없이 `KEY=value` 형태로 통일.
+
+**진짜 원인은 따로 있었다 — URL·키 불일치**: 따옴표를 고쳐도 Supabase가 계속 "Invalid API key"를 냈다. `SUPABASE_SERVICE_ROLE_KEY`(JWT)를 디코딩해서 `ref` 클레임을 확인해보니 실제 프로젝트 참조값은 `pblhrpsjcssfxmnrjyff`인데, `.env.production`에 넣은 `NEXT_PUBLIC_SUPABASE_URL`은 `ykvlsdrholswxrkkuubo`라는 **다른 프로젝트**를 가리키고 있었다. Vercel 대시보드에서 값을 옮길 때 오래된/다른 프로젝트 URL을 잘못 복사한 것으로 추정. URL을 올바른 값으로 바꾸자 Supabase, KIS(같은 요청 안에서 같이 실패하던 토큰 발급 403도) 둘 다 한 번에 해결됨 — 두 에러가 같이 났던 건 각각 다른 원인이 아니라 애초에 요청 자체가 잘못된 프로젝트로 나가서 앞단에서부터 꼬였던 것으로 보임.
+
+**빌드 중 무한 행(hang) 사고**: 재빌드 과정에서 `next build`가 Google Fonts(`fonts.gstatic.com`) 요청 중 응답을 못 받고 **15시간 넘게 멈춰버린** 적이 있었다. 이전엔 같은 증상이 몇 분 안에 에러로 끝났는데, 이번엔 타임아웃 없이 무한 대기했다. `ps aux`로 확인해보니 SSH 세션(로컬 wrapper)은 이미 끊겼는데 서버 쪽 `docker build` 프로세스는 고아 프로세스로 계속 살아있었다 — 예전 `apt-get upgrade` 때 겪은 것과 같은 패턴. `kill -9`로 정리하고 재시도하니 몇 초 만에 성공.
+
+- `pkill -f "docker build"`로 죽이려다 **pkill이 자기 자신의 프로세스 목록 항목(인자에 "docker build" 문자열 포함)에 걸려 SSH 세션째로 죽는** 경험을 함 — `ps aux`로 찾은 정확한 PID를 `kill -9`로 지정하는 게 안전.
+- 이후로는 `docker build` 앞에 `timeout 1800`을 붙여서, 다시 멈추더라도 30분 뒤엔 강제 종료되게 함.
+
+**결과**: 실제 키로 재빌드·재기동 후 `https://whybuy.ai-agent-develop.cloud/`, `/api/popular`, `/api/stocks` 전부 200, 컨테이너 로그에 에러 없음.
+
+### T2 — 로그인 리다이렉트 버그와 그 여정
+
+실제 키로 배포 후 브라우저에서 구글 로그인을 눌러보니, 로그인 콜백 처리 후 브라우저가 `546394f3f923:3000`(컨테이너 ID)이라는, 외부에서 존재하지도 않는 주소로 리다이렉트되며 `DNS_PROBE_FINISHED_NXDOMAIN`으로 끊겼다.
+
+**원인 추적**:
+1. `app/auth/callback/route.ts`가 `new URL(request.url).origin`으로 리다이렉트 목적지를 만드는데, 이 `origin`이 실제로는 `https://546394f3f923:3000`으로 계산되고 있었다 — 컨테이너 자체의 `HOSTNAME`(Docker가 컨테이너마다 자동으로 컨테이너 ID로 설정)과 `PORT` 값이 새어나온 것.
+2. Caddy가 원본 Host 헤더를 안 넘겨주는 줄 알고 `header_up Host/X-Forwarded-*`를 명시적으로 추가했지만 — Caddy는 애초에 기본으로 이 헤더들을 넘겨주고 있었다(설정 검증 시 "Unnecessary header_up" 경고로 확인). Caddy 문제가 아니었음.
+3. 컨테이너에 직접(`localhost:3000`, Caddy 안 거치고) 올바른 `Host`/`X-Forwarded-*` 헤더를 수동으로 흉내내서 요청해봐도 origin이 여전히 컨테이너 ID로 나왔다 — **Next.js standalone `server.js`가 요청의 Host 헤더와 무관하게 `HOSTNAME`/`PORT` 환경변수로 origin을 만든다**는 걸 이렇게 확인함.
+4. `next.config.ts`에 `experimental: { trustHostHeader: true }`를 추가하면 될 줄 알았으나, 실제로는 **존재하지 않는 옵션**이라 "Unrecognized key" 경고만 뜨고 무시됐다 (원래 `server.js`에 박혀있던 `trustHostHeader: false`는 Next.js 내부에서만 쓰는 값이지 next.config.ts로 사용자가 켤 수 있는 옵션이 아니었음).
+
+**최종 수정**: 리다이렉트 origin 계산 자체를 코드에서 고침 — `x-forwarded-host`/`x-forwarded-proto` 헤더를 우선 사용하고, 없을 때만 `request.url`의 origin으로 폴백하도록 `app/auth/callback/route.ts` 변경 (Supabase 공식 Next.js SSR 예제가 프록시 뒤에서 배포할 때 정확히 이 패턴을 씀).
+
+### 재빌드 지옥 — 서버 사양 문제 총정리
+
+수정 사항을 반영하려고 서버에서 재빌드를 반복하다가 연달아 문제를 겪었다:
+
+- **디스크 풀(`No space left on device`)**: 반복된 빌드로 캐시가 쌓여 10GB 디스크가 100% 참. `docker builder prune -af`(1.3GB), `apt-get clean`(1.1GB), `journalctl --vacuum-size=100M`(416MB), 안 쓰는 커널 패키지 6개 `apt-get autoremove`로 정리해서 69%까지 내림.
+- **SSH 연결 불안정 → 빌드가 자꾸 취소됨**: `docker build`를 일반 SSH 세션 안에서 돌리면, 로컬 연결이 잠깐이라도 끊기는 순간 BuildKit이 `context canceled`로 빌드 자체를 취소해버렸다. `setsid nohup ... < /dev/null &`로 SSH 세션과 완전히 분리해서 띄우는 방식으로 바꿈.
+- 그래도 서버가 vCPU 1개짜리라 빌드 자체가 느리고 Docker Hub 인증(TLS handshake timeout) 같은 일시적 네트워크 문제도 겹쳐서, 결국 **로컬 Docker Desktop을 고쳐서(아래) 로컬 빌드 → 이미지 전송(`docker save`/`load`) 방식으로 되돌아감** — 16초 만에 빌드 끝남. 이 프로젝트가 REQ-08에서 "서버는 빌드 안 하고 pull/load만" 하라고 한 이유를 제대로 체감함.
+
+### 로컬 Docker Desktop 복구
+
+전날 고장났던(`dockerInference` 리파스 포인트 파일, Error 1920) 문제가 재부팅 후에도 그대로였고, **`wsl --unregister docker-desktop`로 WSL 배포판을 통째로 지워도 그 파일들은 그대로 남아있었다** — 즉 이 파일들은 WSL 가상디스크 안이 아니라 Windows 쪽에 실제로 박혀있던 것. 결국 Docker Desktop 자체의 **"Reset to factory defaults"** 버튼으로 해결됨 (일반 파일 삭제 도구로는 못 건드리는 걸 Docker Desktop 자체 초기화 로직이 정리해준 것으로 보임). 로컬 이미지·컨테이너는 다 날아갔지만 이 시점엔 서버 쪽에 이미 다 옮겨져 있어서 손실 없음.
+
+**결과**: 수정된 이미지로 컨테이너 재기동 후 `curl .../auth/callback` 응답의 `Location` 헤더가 정확한 도메인(`https://whybuy.ai-agent-develop.cloud/auth/error`)을 가리키는 것 확인. 실제 브라우저 로그인 테스트는 다음 확인 예정.
+
+**T2 통과** — 실제 브라우저에서 구글 로그인 정상 동작 확인. 리다이렉트 버그 완전히 해결됨.
+
+**T3 통과** — `/trade`에서 종목 검색 후 차트·종목정보·공시뉴스 3개 탭 모두 데이터 정상 표시.
+
+**T4 통과 (이번 전환의 핵심 목표)** — 서로 다른 종목코드 8개로 `/api/quote`를 동시에 요청, 전부 200 응답·컨테이너 로그에 `EGW00201` 등 에러 전무 확인. 컨테이너 1개 + 프로세스 전역 큐 구조가 의도대로 동작함을 실측으로 확인.
+
+**T5 통과** — 삼성전자(005930) 당일 분봉 전체 조회 14.4초 완주. Vercel `maxDuration: 45` 제약과 Caddy 502 둘 다 없음. Vercel 시절 실측치(15.8초)와 비슷한 수준이라 리전 타협(일본 대신 국내 유지)에 따른 지연 증가는 미미했던 것으로 보임.
+
+(참고: `app/api/chart/route.ts`에 Vercel 전용 `export const maxDuration = 45`가 코드에 여전히 남아있음 — Docker에서는 무해하지만 9단계 정리 때 주석 처리하거나 제거 필요, REQ-06)
+
+**T7 통과** — `docker stop whybuy` → `docker start whybuy` 후 수 초 만에 정상 응답 복구. 데이터는 Supabase(외부 호스팅)에 저장되므로 컨테이너 재시작과 무관하게 유지됨(원래 당연한 구조지만 실측으로 재확인).
+
+**T6(모의 매수)은 주말이라 장이 닫혀 있어 월요일 이후로 보류.**
+
+## 8단계 — DNS 전환 및 롤백 (기획서와 다르게 진행됨)
+
+기획서는 "기존 커스텀 도메인을 Vercel → 새 서버로 DNS 재지정, 문제 생기면 DNS 원복"을 가정했는데, 실제로는 커스텀 도메인이 없었다 — 원래 배포는 `whybuy-gray.vercel.app`이라는 Vercel 전용 서브도메인이라 우리가 DNS를 옮길 수 있는 대상이 아니었다. 대신 이번에 완전히 새로운 도메인(`whybuy.ai-agent-develop.cloud`)을 사서 새 서버에 바로 연결하는 방식으로 진행했다.
+
+그 결과 "DNS 전환"이라는 절차 자체가 필요 없어졌다 — 두 URL이 서로 무관하게 계속 공존한다:
+- 새 서버: `https://whybuy.ai-agent-develop.cloud` (지금부터 메인으로 사용)
+- 기존 Vercel: `https://whybuy-gray.vercel.app` (건드린 적 없어서 그대로 살아있음, 이게 곧 롤백 경로)
+
+**T8(롤백 리허설)** — DNS 원복 대신, Vercel URL이 지금도 정상 응답하는지로 확인. `https://whybuy-gray.vercel.app/` 200 확인 — 문제가 생기면 이 URL로 돌아가면 그만이라 별도 조치가 필요 없는 구조. 기획서보다 오히려 더 안전한 롤백 경로(DNS 전파 대기 시간 없이 즉시 전환 가능).
+
+## 9단계 — 정리
+
+whybuy 프로젝트(포트폴리오 저장소, jjh7757/portfolio) 쪽에 Docker 관련 변경사항 커밋·푸시:
+- `next.config.ts`(`output: standalone`), `Dockerfile`·`.dockerignore`·`docker-compose.yml`, `auth/callback` origin 버그 수정, README에 새 배포 주소 반영
+
+**`vercel.json`·`app/api/chart/route.ts`의 `maxDuration = 45`는 일부러 지금 안 건드림.** 기획서 6장에서 이미 "Vercel 배포는 전환 후 최소 2주 유지"로 정해뒀는데, `maxDuration`을 지금 지우면 Vercel의 기본 함수 타임아웃이 더 짧아져서 아직 살려두기로 한 롤백 배포(Vercel)에서 분봉 차트가 다시 끊길 수 있다. 이 정리는 2주 뒤 Vercel 배포를 실제로 내릴 때 같이 하기로 함.
+
+포트폴리오 저장소는 GitHub 연동으로 Vercel 자동 배포가 걸려있어서, 이번 push로 Vercel 재배포가 트리거됐을 가능성이 있음 — push 후 `https://whybuy-gray.vercel.app` 정상 응답(200) 재확인, 롤백 경로 영향 없음.
+
+## 남은 것
+
+- T6(모의 매수) — 주말이라 장 닫혀 있어 월요일 이후 확인
+- 2주 뒤: Vercel 배포 삭제 + `vercel.json`·`maxDuration` 정리
