@@ -27,7 +27,8 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-11 | [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문 7개 주제 정리 |
 | 2026-08-12 | [Docker로 n8n 셀프호스팅하고 Telegram 웹훅 연동하기](n8n실습/Docker로n8n셀프호스팅하기.md) — Windows Home + WSL2 + Docker Desktop 설치 트러블슈팅, ngrok으로 로컬 웹훅 공개, ngrok vs Cloudflare Tunnel 비교, [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 이미지·레지스트리·배포 대상(Cloud Run/K8s/VM/PaaS)·Docker Compose 개념 정리, [왜샀어 Docker 배포 전환 기획서](https://github.com/jjh7757/whybuy/blob/master/KIS-Web-Agent-Notes/08_Deploy/01_docker_migration.md) — 서버리스에서 상주 프로세스로 옮겨 KIS 레이트리밋 큐 단일성·체결 확인 스케줄러 한계를 해소하는 이관 계획 (whybuy 저장소) |
 | 2026-08-13 | [파이썬 기초](CS지식/파이썬기초/README.md) 문자열·집합과 튜플·딕셔너리·함수·모듈 5개 주제 추가 — 문자열 포매팅과 메서드, 집합 연산과 튜플, 딕셔너리 키-밸류 조작, 함수의 구조와 내장함수, math·random·collections·itertools 표준 모듈 |
-| 2026-08-14 | [왜샀어 Docker 배포 전환 작업 로그](vercel실습/왜샀어/Docker배포전환.md) — Vercel에서 네이버클라우드 Micro Server(Docker 셀프호스팅)로 옮긴 실제 작업 기록. 서버 업체 재선정(오라클 홈 리전 이슈), SSH·sshd 트러블슈팅, 스왑·Docker·ufw 구성, 도메인 연결과 Caddy HTTPS 발급, 리버스 프록시 뒤에서 로그인 리다이렉트가 컨테이너 hostname으로 새던 버그 추적·수정, 반복 재빌드 중 디스크 풀·SSH 불안정 트러블슈팅까지 — 로그인·조회·레이트리밋·분봉차트·재시작 내구성 검증(T2~T5, T7) 통과 |
+| 2026-08-14 | [왜샀어 Docker 배포 전환 작업 로그](vercel실습/왜샀어/Docker배포전환.md) — Vercel에서 네이버클라우드 Micro Server(Docker 셀프호스팅)로 옮기는 실제 작업 기록 시작. 서버 업체 재선정(오라클 홈 리전 이슈로 네이버클라우드 전환), SSH·sshd 트러블슈팅, 스왑·Docker·ufw 구성, 도메인 연결과 Caddy HTTPS 발급, OAuth 리다이렉트 URI 등록까지 |
+| 2026-08-15 | [왜샀어 Docker 배포 전환 작업 로그](vercel실습/왜샀어/Docker배포전환.md) 이어서 진행 — 리버스 프록시 뒤에서 로그인 리다이렉트가 컨테이너 자체 hostname으로 새던 버그 추적·수정(Next.js standalone origin 이슈), 반복 재빌드 중 디스크 풀·SSH 연결 불안정 트러블슈팅, 로컬 Docker Desktop 복구. 로그인·조회·레이트리밋·분봉차트·재시작 내구성 검증(T2~T5, T7) 통과, whybuy 저장소에 Docker 배포 코드 반영 |
 
 ## 목차
 
