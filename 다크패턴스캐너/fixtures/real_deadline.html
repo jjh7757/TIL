@@ -1,0 +1,36 @@
+<!-- 정답: 정상. 실제 마감 시각(오늘 자정)을 기준으로 계산하므로 새로고침·새 세션에 영향받지 않는다. -->
+<meta charset="utf-8">
+<title>[fixture] 실제 마감 타이머</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; }
+  .urgent { color: #d00; font-weight: 700; font-size: 1.4rem; }
+  .price { font-size: 1.6rem; }
+  .box { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin: 16px 0; }
+</style>
+
+<h1>블루투스 스피커 (fixture)</h1>
+
+<div class="box">
+  <p class="price">판매가 <strong>64,000원</strong></p>
+  <p>오늘의 딜 종료까지 <span id="timer" class="urgent">--:--:--</span></p>
+  <p>재고 <span id="stock">12</span>개</p>
+</div>
+
+<script>
+  // 마감은 벽시계 기준 오늘 자정. 페이지를 몇 번 열든 같은 시각을 향해 줄어든다.
+  const deadline = new Date();
+  deadline.setHours(24, 0, 0, 0);
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    document.getElementById('timer').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>

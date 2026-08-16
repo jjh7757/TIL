@@ -1,0 +1,21 @@
+<!-- 정답: 2단계. 아직 총액이 그대로라 이 단계까지만 보면 문제가 없어 보인다. -->
+<meta charset="utf-8">
+<title>[fixture] 2단계 · 장바구니</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 8px 0; border-bottom: 1px solid #eee; }
+  td.num { text-align: right; }
+  .total td { font-size: 1.4rem; font-weight: 700; border-bottom: none; }
+  a.btn { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #222; color: #fff;
+          text-decoration: none; border-radius: 6px; }
+</style>
+
+<h1>장바구니</h1>
+<table>
+  <tr><td>무선 이어폰 프로</td><td class="num">89,000원</td></tr>
+  <tr><td>배송비</td><td class="num">0원</td></tr>
+  <tr class="total"><td>결제 예정 금액</td><td class="num" id="total">89,000원</td></tr>
+</table>
+
+<a class="btn" id="to-checkout" href="step3_checkout.html">주문하기</a>

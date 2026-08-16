@@ -1,0 +1,17 @@
+<!-- 정답: "무료배송"이라 광고해놓고 결제 단계에서 배송비를 청구하는 흐름.
+     라벨은 '배송비'로 같지만 값이 0원 -> 3,000원으로 바뀐다. -->
+<meta charset="utf-8">
+<title>[fixture] 유령 배송비 1단계 · 상품</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; }
+  .price { font-size: 2rem; font-weight: 700; }
+  .badge { background: #e6f4ea; color: #137333; padding: 2px 8px; border-radius: 4px; font-size: .85rem; }
+  a.btn { display: inline-block; margin-top: 20px; padding: 12px 24px; background: #222; color: #fff;
+          text-decoration: none; border-radius: 6px; }
+</style>
+
+<h1>캠핑 의자</h1>
+<p class="price">45,000원</p>
+<p><span class="badge">무료배송</span> 배송비 0원</p>
+
+<a class="btn" id="to-cart" href="ghost_step2_cart.html">장바구니 담기</a>

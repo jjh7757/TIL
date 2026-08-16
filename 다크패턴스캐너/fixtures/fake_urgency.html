@@ -1,0 +1,41 @@
+<!-- 정답: 가짜 긴급성. 타이머가 세션마다 초기화되고, 재고 표시도 무작위. -->
+<meta charset="utf-8">
+<title>[fixture] 세션 리셋 타이머</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; }
+  .urgent { color: #d00; font-weight: 700; font-size: 1.4rem; }
+  .price { font-size: 1.6rem; }
+  .box { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin: 16px 0; }
+</style>
+
+<h1>무선 이어폰 프로 (fixture)</h1>
+
+<div class="box">
+  <p class="price">판매가 <strong>89,000원</strong></p>
+  <p>특가 마감까지 <span id="timer" class="urgent">00:09:59</span></p>
+  <p class="urgent">재고 <span id="stock">7</span>개 남음!</p>
+  <p>지금 <span id="viewers">23</span>명이 이 상품을 보고 있습니다</p>
+</div>
+
+<script>
+  // 페이지가 로드될 때마다 무조건 10분에서 다시 시작한다.
+  // 서버가 정한 마감 시각이 존재하지 않으므로, 새로고침만 해도 "마감"은 영원히 오지 않는다.
+  let remaining = 599;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    document.getElementById('timer').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    if (remaining > 0) remaining--;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+
+  // 재고·조회수도 로드마다 무작위 — 실제 값이 아니다.
+  document.getElementById('stock').textContent = 2 + Math.floor(Math.random() * 8);
+  document.getElementById('viewers').textContent = 10 + Math.floor(Math.random() * 40);
+</script>

@@ -1,0 +1,26 @@
+<!-- 정답: 3단계에서 배송비·수수료·포장비가 처음 등장한다. 순차공개 가격책정(숨은 비용). -->
+<meta charset="utf-8">
+<title>[fixture] 3단계 · 결제</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 8px 0; border-bottom: 1px solid #eee; }
+  td.num { text-align: right; }
+  .total td { font-size: 1.4rem; font-weight: 700; border-bottom: none; }
+  .fine { color: #888; font-size: .75rem; }
+  button { margin-top: 20px; padding: 12px 24px; background: #d00; color: #fff; border: 0;
+           border-radius: 6px; font-size: 1rem; }
+</style>
+
+<h1>결제</h1>
+<table>
+  <tr><td>무선 이어폰 프로</td><td class="num">89,000원</td></tr>
+  <tr><td>배송비</td><td class="num">3,000원</td></tr>
+  <tr><td>결제 수수료</td><td class="num">2,500원</td></tr>
+  <tr><td>안심 포장 <input type="checkbox" id="wrap" checked></td><td class="num">1,000원</td></tr>
+  <tr class="total"><td>최종 결제 금액</td><td class="num" id="total">95,500원</td></tr>
+</table>
+
+<p class="fine">안심 포장은 기본 적용되며, 원하지 않으실 경우 위 항목에서 해제하실 수 있습니다.</p>
+
+<button id="pay">결제하기</button>

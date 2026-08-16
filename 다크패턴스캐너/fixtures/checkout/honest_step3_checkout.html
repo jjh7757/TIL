@@ -1,0 +1,21 @@
+<!-- 정답: 정상 대조군 3단계. 1단계에 고지한 67,000원 그대로 결제된다. -->
+<meta charset="utf-8">
+<title>[fixture] 정상 3단계 · 결제</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 8px 0; border-bottom: 1px solid #eee; }
+  td.num { text-align: right; }
+  .total td { font-size: 1.4rem; font-weight: 700; border-bottom: none; }
+  button { margin-top: 20px; padding: 12px 24px; background: #222; color: #fff; border: 0;
+           border-radius: 6px; font-size: 1rem; }
+</style>
+
+<h1>결제</h1>
+<table>
+  <tr><td>블루투스 스피커</td><td class="num">64,000원</td></tr>
+  <tr><td>배송비</td><td class="num">3,000원</td></tr>
+  <tr class="total"><td>최종 결제 금액</td><td class="num" id="total">67,000원</td></tr>
+</table>
+
+<button id="pay">결제하기</button>

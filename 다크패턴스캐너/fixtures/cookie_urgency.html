@@ -1,0 +1,40 @@
+<!-- 정답: 가짜 긴급성(쿠키 기반). 같은 브라우저에서는 이어지지만, 방문자가 바뀌면 각자 10분을 새로 받는다. -->
+<meta charset="utf-8">
+<title>[fixture] 쿠키 기반 타이머</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; }
+  .urgent { color: #d00; font-weight: 700; font-size: 1.4rem; }
+  .price { font-size: 1.6rem; }
+  .box { border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin: 16px 0; }
+</style>
+
+<h1>보조배터리 20000mAh (fixture)</h1>
+
+<div class="box">
+  <p class="price">판매가 <strong>32,000원</strong></p>
+  <p>회원님만의 특별 할인 <span id="timer" class="urgent">00:10:00</span> 남음</p>
+</div>
+
+<script>
+  // 마감 시각을 방문자별로 localStorage에 저장한다.
+  // 새로고침에는 버티지만, 쿠키/스토리지를 비우면(= 새 방문자) 다시 10분이 주어진다.
+  const KEY = 'deal_deadline';
+  let deadline = Number(localStorage.getItem(KEY));
+  if (!deadline || deadline < Date.now()) {
+    deadline = Date.now() + 600 * 1000;
+    localStorage.setItem(KEY, String(deadline));
+  }
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const remaining = Math.max(0, Math.floor((deadline - Date.now()) / 1000));
+    const h = Math.floor(remaining / 3600);
+    const m = Math.floor((remaining % 3600) / 60);
+    const s = remaining % 60;
+    document.getElementById('timer').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
