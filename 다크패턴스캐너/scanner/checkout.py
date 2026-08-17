@@ -15,14 +15,29 @@ from playwright.async_api import Browser, Page
 from . import dom, money
 from .money import Amount
 
+# goto 직후 select/click 을 보내기 전에 최소로 기다리는 시간.
+SETTLE_AFTER_GOTO_MS = 1200
+
 
 @dataclass
 class Step:
-    """흐름의 한 단계. goto 로 시작하고 이후는 click 으로 넘어간다."""
+    """흐름의 한 단계. goto 로 시작하고 이후는 select/click 으로 넘어간다.
+
+    실제 쇼핑몰은 "옵션(색상 등)을 고르지 않으면 장바구니 버튼이 막히는" 경우가
+    흔하다 (예: 카페24 기반 스토어의 <select id=product_option_id1>). 그래서
+    한 단계 안에서 select 를 먼저 적용한 뒤 click 으로 넘어갈 수 있게 한다.
+    """
 
     name: str
     goto: str | None = None
+    select: dict[str, str] | None = None  # {선택자: 값}, goto/click 사이에 적용
     click: str | None = None
+    # Playwright 의 click 은 요소가 실제로 눈에 보여야 클릭한다. 그런데 실제
+    # 사이트에는 CSS 로 접어두거나(display:none 아님, 높이 0) 레이아웃 계산이
+    # 늦어 이 기준을 통과 못 하는 "실사용자에겐 보이는" 버튼이 있다
+    # (오롤리데이 장바구니의 "전체상품주문" 버튼이 그랬다). 이런 단계는
+    # js_click 으로 DOM에 직접 클릭 이벤트를 보낸다.
+    js_click: str | None = None
     wait_ms: int = 1200
 
     @staticmethod
@@ -30,7 +45,9 @@ class Step:
         return Step(
             name=d["name"],
             goto=d.get("goto"),
+            select=d.get("select"),
             click=d.get("click"),
+            js_click=d.get("js_click"),
             wait_ms=int(d.get("wait_ms", 1200)),
         )
 
@@ -86,8 +103,29 @@ async def scan(browser: Browser, steps: list[Step]) -> CheckoutReport:
             try:
                 if step.goto:
                     await page.goto(step.goto, wait_until="domcontentloaded")
-                elif step.click:
+                    # DOMContentLoaded 는 HTML 파싱이 끝났다는 뜻일 뿐, 옵션 선택지를
+                    # 채우거나 장바구니 버튼에 핸들러를 붙이는 페이지 자체 스크립트는
+                    # 그 뒤에도 한동안 계속 실행된다. 이 틈에 select/click 을 곧바로
+                    # 보내면 서버에는 요청이 가도 페이지 상태가 준비되기 전이라
+                    # 조용히 무시되는 경우가 실제로 있었다(카페24 스토어 2곳에서 확인).
+                    await page.wait_for_timeout(min(step.wait_ms, SETTLE_AFTER_GOTO_MS))
+                if step.select:
+                    for selector, value in step.select.items():
+                        await page.select_option(selector, value)
+                    # select_option 은 DOM 값이 바뀌고 change 이벤트가 나갔다는 것만
+                    # 보장한다. 그 이벤트를 받아 "선택된 옵션" 내부 상태를 갱신하는
+                    # 페이지 스크립트가 끝났다는 보장은 아니다. 이 틈에 곧바로
+                    # 장바구니 버튼을 누르면 서버가 200 을 반환하고도 실제로는
+                    # 담기지 않는 경우를 실제 카페24 스토어에서 반복 확인했다.
+                    await page.wait_for_timeout(500)
+                if step.click:
+                    # 새 페이지로 넘어가지 않고 같은 화면에 장바구니 서랍만 여는
+                    # 클릭도 흔하다. wait_for_load_state 는 그런 경우 이미 도달한
+                    # 상태이므로 즉시 반환되어 별문제 없다.
                     await page.click(step.click)
+                    await page.wait_for_load_state("domcontentloaded")
+                elif step.js_click:
+                    await dom.js_click(page, step.js_click)
                     await page.wait_for_load_state("domcontentloaded")
                 await page.wait_for_timeout(step.wait_ms)
             except Exception as exc:  # 단계 하나가 막혀도 거기까지의 관찰은 살린다.

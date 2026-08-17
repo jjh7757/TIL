@@ -44,22 +44,63 @@ _HELPERS = r"""
     return s.visibility !== 'hidden' && s.display !== 'none' && s.opacity !== '0';
   }
 
-  function innermostMatches(re, maxLen) {
+  function deepElements(root) {
+    // 서드파티 위젯(사회적 증거 팝업, 리뷰 위젯 등)은 스타일 캡슐화를 위해
+    // open shadow DOM 으로 렌더링되는 경우가 흔하다 — 오롤리데이의 "N명이
+    // 보고 있는 상품" 위젯이 그랬다. querySelectorAll 은 shadow 경계를
+    // 넘지 않으므로, shadowRoot 를 만나면 그 안까지 재귀적으로 파고든다.
+    // (닫힌 shadow root 는 공개 API로 접근 불가라 이 방식으로도 못 본다.)
+    const out = [];
+    const stack = [root];
+    while (stack.length) {
+      const node = stack.pop();
+      for (const el of node.querySelectorAll('*')) {
+        out.push(el);
+        if (el.shadowRoot) stack.push(el.shadowRoot);
+      }
+    }
+    return out;
+  }
+
+  function innermostMatches(matchFn, maxLen) {
     // 패턴에 걸리는 요소 중 "가장 안쪽" 것만 남긴다.
     // 그러지 않으면 body 부터 모든 조상이 전부 후보로 잡힌다.
     const hits = [];
-    for (const el of document.querySelectorAll('body *')) {
+    for (const el of deepElements(document.body)) {
       const tag = el.tagName;
       if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'TEMPLATE') continue;
       const text = visibleText(el);
       if (!text || text.length > maxLen) continue;
-      if (re.test(text)) hits.push(el);
+      if (matchFn(text)) hits.push(el);
     }
     return hits.filter(el => !hits.some(other => other !== el && el.contains(other)));
   }
 """
 
-# 시간처럼 보이는 텍스트. timeparse.LOOKS_LIKE_TIME 과 같은 뜻을 JS 로 옮긴 것.
+# 시간처럼 보이는 텍스트. 콜론 표기(00:22:45)는 그 자체로 신호가 강해 바로 인정한다.
+# 하지만 "일/시간/분/초" 단위 표기만으로는 "단 7일간 만나는 혜택" 같은 마케팅 문구도
+# 걸려버린다 — 실제 무신사에서 회전 배너의 이런 문구가 타이머로 오인된 적이 있다.
+# 그래서 단위 표기 단독으로는 부족하고, 같은 요소 안에 마감·종료·남음류 긴급성
+# 문구가 함께 있어야만 후보로 인정한다.
+_CLOCK_RE_JS = r"/\d{1,3}\s*[:：]\s*\d{1,2}/"
+_BARE_UNIT_RE_JS = (
+    r"/\d+\s*(?:일|시간|분|초)"
+    r"|\d+\s*(?:days?|hours?|hrs?|minutes?|mins?|seconds?|secs?|[dhms])(?![a-z])/i"
+)
+_URGENCY_RE_JS = r"/마감|종료|남음|남았|remaining|\bleft\b|ends?\s*in|expires?/i"
+
+_TIMER_MATCH_FN_JS = f"""
+  function looksLikeTimer(text) {{
+    const clock = {_CLOCK_RE_JS};
+    const bareUnit = {_BARE_UNIT_RE_JS};
+    const urgency = {_URGENCY_RE_JS};
+    if (clock.test(text)) return true;
+    return bareUnit.test(text) && urgency.test(text);
+  }}
+"""
+
+# _JS_SNAPSHOT 안에서 "시간처럼 보이는지"만 따로 재사용할 때 쓰는 순수 정규식(콜론+단위 통합).
+# claims 에서 타이머 문구를 걸러내는 용도이므로, 후보 판정보다 살짝 넓게 잡아도 된다.
 _TIME_RE_JS = (
     r"/\d{1,3}\s*[:：]\s*\d{1,2}"
     r"|\d+\s*(?:일|시간|분|초)"
@@ -78,8 +119,9 @@ _CLAIM_RE_JS = (
 _JS_SNAPSHOT = (
     "() => {\n"
     + _HELPERS
+    + _TIMER_MATCH_FN_JS
     + f"""
-  const timers = innermostMatches({_TIME_RE_JS}, 80).filter(isRendered).map(el => ({{
+  const timers = innermostMatches(looksLikeTimer, 80).filter(isRendered).map(el => ({{
     selector: cssPath(el),
     text: visibleText(el),
     context: visibleText(el.parentElement || el).slice(0, 140),
@@ -87,7 +129,8 @@ _JS_SNAPSHOT = (
 
   // "00:09:58 남음" 같은 타이머 문구가 재고 주장으로 새어 들어오지 않게 시간 표기를 걸러낸다.
   const timeRe = {_TIME_RE_JS};
-  const claims = innermostMatches({_CLAIM_RE_JS}, 120)
+  const claimRe = {_CLAIM_RE_JS};
+  const claims = innermostMatches(text => claimRe.test(text), 120)
     .filter(isRendered)
     .filter(el => !timeRe.test(visibleText(el)))
     .map(el => ({{
@@ -152,6 +195,30 @@ _JS_PRESELECTED = (
 )
 
 _JS_PAGE_TEXT = "() => document.body ? document.body.innerText : ''"
+
+# CSS 선택자 또는 "text=문구" 로 요소를 찾아 DOM에 직접 클릭 이벤트를 보낸다.
+# Playwright 의 click() 은 요소가 실제로 화면에 "보인다"는 여러 조건을 검사하는데,
+# 반응형 레이아웃/지연 렌더링 때문에 실사용자에겐 멀쩡히 보이는 버튼도 그 기준에
+# 걸려 타임아웃나는 실제 사례가 있었다. 이 헬퍼는 그 검사를 건너뛴다.
+_JS_CLICK = r"""
+(target) => {
+  let el = null;
+  if (target.startsWith('text=')) {
+    const wanted = target.slice(5).trim();
+    el = [...document.querySelectorAll('a, button, [role=button]')]
+      .find(e => e.textContent.trim() === wanted);
+  } else {
+    el = document.querySelector(target);
+  }
+  if (!el) throw new Error('js_click: 요소를 찾지 못했습니다 — ' + target);
+  el.click();
+}
+"""
+
+
+async def js_click(page: Page, target: str) -> None:
+    """CSS 선택자 또는 'text=문구'로 찾은 요소에 DOM 클릭을 직접 디스패치한다."""
+    await page.evaluate(_JS_CLICK, target)
 
 
 async def snapshot(page: Page) -> dict[str, Any]:

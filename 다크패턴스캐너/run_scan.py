@@ -5,8 +5,8 @@
   python run_scan.py checkout <flow.json> # 결제 흐름을 따라가며 총액 추적
 
 flow.json 예시:
-  [{"name": "상품", "goto": "https://.../item"},
-   {"name": "장바구니", "click": "#to-cart"},
+  [{"name": "상품", "goto": "https://.../item", "select": {"#color": "grey"}, "click": "#to-cart"},
+   {"name": "장바구니", "goto": "https://.../cart"},
    {"name": "결제", "click": "#to-checkout"}]
 """
 

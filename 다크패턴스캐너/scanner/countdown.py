@@ -28,6 +28,13 @@ from .timeparse import format_duration, parse_duration
 TOLERANCE_S = 2.5
 # A 의 첫 관측과 C 의 관측 사이에 이만큼은 흘러야 "되돌아갔다"와 "이어졌다"가 구분된다.
 MIN_SPREAD_S = 5.0
+# 후보 탐색 시 스냅샷을 몇 번, 얼마 간격으로 찍을지.
+# 회전 배너(캐러셀)는 여러 슬라이드가 페이드 인/아웃하며 한 슬라이드씩만 보이므로,
+# 단 한 번만 스냅샷을 찍으면 그 순간 숨어 있던 진짜 타이머 슬라이드를 놓친다.
+# (실제로 무신사 홈에서 "종료까지 00:22:45 남음" 슬라이드가 한 번의 스냅샷에서는
+#  보이지 않아 후보에서 빠진 적이 있다.)
+DISCOVERY_ROUNDS = 3
+DISCOVERY_INTERVAL_MS = 700
 
 
 @dataclass
@@ -73,14 +80,20 @@ async def scan(
     page_a = await ctx_a.new_page()
     await _goto(page_a, url, settle_ms)
 
-    snap = await dom.snapshot(page_a)
-    t_a0 = time.monotonic()
-    timers = snap["timers"]
-    claims_a = {c["selector"]: c["text"] for c in snap["claims"]}
+    timers, claims_a = await _discover_candidates(page_a)
     selectors = [t["selector"] for t in timers]
 
     if not timers:
         notes.append("시간처럼 보이는 요소를 찾지 못했습니다. 타이머가 없거나 iframe 안에 있을 수 있습니다.")
+
+    # 여러 스냅샷으로 후보를 찾은 뒤, 모든 후보를 같은 순간에 다시 읽어 기준 시각을 통일한다.
+    # (캐러셀 슬라이드마다 발견된 시점이 다르면 경과 시간 계산이 후보별로 어긋난다.)
+    read_a0 = await dom.read_selectors(page_a, selectors)
+    t_a0 = time.monotonic()
+    for t in timers:
+        found = read_a0.get(t["selector"])
+        if found is not None:
+            t["text"] = found
 
     # 같은 페이지를 그대로 두고 몇 초 뒤 다시 읽는다. 실제로 감소하는 값만 타이머로 인정한다.
     await asyncio.sleep(sample_gap_s)
@@ -130,6 +143,25 @@ async def scan(
     return CountdownReport(url=url, timers=verdicts, claims=claim_verdicts, notes=notes)
 
 
+async def _discover_candidates(page) -> tuple[list[dict[str, Any]], dict[str, str]]:
+    """스냅샷을 여러 번 찍어 후보를 합친다.
+
+    캐러셀의 각 슬라이드는 고유한 선택자를 유지한 채 opacity 로만 보였다 숨었다 하므로,
+    한 번의 스냅샷으로는 그 순간 숨어 있는 슬라이드(예: 진짜 카운트다운)를 놓칠 수 있다.
+    """
+    timers: dict[str, dict[str, Any]] = {}
+    claims: dict[str, str] = {}
+    for i in range(DISCOVERY_ROUNDS):
+        snap = await dom.snapshot(page)
+        for t in snap["timers"]:
+            timers.setdefault(t["selector"], t)
+        for c in snap["claims"]:
+            claims.setdefault(c["selector"], c["text"])
+        if i < DISCOVERY_ROUNDS - 1:
+            await page.wait_for_timeout(DISCOVERY_INTERVAL_MS)
+    return list(timers.values()), claims
+
+
 async def _goto(page, url: str, settle_ms: int) -> None:
     await page.goto(url, wait_until="domcontentloaded")
     # 타이머 위젯은 대부분 스크립트가 늦게 그린다. 잠깐 기다렸다가 읽는다.
@@ -165,20 +197,40 @@ def _judge_timer(
     }
     base = dict(selector=timer["selector"], context=timer["context"], observations=obs)
 
-    if a0 is None or a1 is None:
+    if a0 is None:
         return TimerVerdict(
-            **base, first_value=a0 or 0, verdict="inconclusive",
+            **base, first_value=0, verdict="inconclusive",
             detail="값을 시간으로 읽지 못했습니다.",
         )
 
-    # 실제로 흐르는 값인지부터 확인한다. 시각 표기(예: 배송 예정 12:30)를 걸러내는 단계.
-    drift = a0 - a1
-    if drift <= 0:
+    # 네 번의 관측(A, A+gap, B, C)이 오차 범위 안에서 전부 똑같다면, 같은 페이지에서도
+    # 리로드·새 세션을 거쳐도 전혀 움직이지 않았다는 뜻이다. 실제 무신사에서 "1:1 문의하기"
+    # 같은 전화번호 표기가 콜론 패턴에 걸려 이런 식으로 나타났다 — 시간이 아니라 우연히
+    # 시간처럼 보이는 문자열이므로 타이머로 취급하지 않는다.
+    values = [a0, a1, b, c]
+    if all(v is not None for v in values) and all(abs(v - a0) <= TOLERANCE_S for v in values):
         return TimerVerdict(
             **base, first_value=a0, verdict="not_counting",
-            detail=f"{elapsed_a:.1f}초 동안 값이 줄지 않았습니다. 카운트다운이 아닙니다.",
+            detail="같은 페이지·새로고침·새 세션 어디에서도 값이 변하지 않았습니다. 카운트다운이 아닙니다.",
         )
-    if abs(drift - elapsed_a) > max(TOLERANCE_S, elapsed_a * 0.5):
+
+    if a1 is None:
+        return TimerVerdict(
+            **base, first_value=a0, verdict="inconclusive",
+            detail="같은 페이지에서 값을 다시 읽지 못했습니다.",
+        )
+
+    # 같은 페이지 안에서 매초 줄어드는 유형(setInterval 애니메이션)은 속도가 맞는지 검증한다.
+    # 반면 페이지를 열 때만 서버 마감을 기준으로 계산해 정적으로 보여주는 유형은
+    # 같은 페이지 안에서는 안 움직이는 게 정상이므로(drift == 0), 이 검사를 건너뛰고
+    # 곧바로 B/C 비교(리로드·새 세션 사이에 경과 시간만큼 줄었는지)로 넘어간다.
+    drift = a0 - a1
+    if drift < 0:
+        return TimerVerdict(
+            **base, first_value=a0, verdict="inconclusive",
+            detail="시간이 거꾸로 흐릅니다. 값을 직접 확인해 주세요.",
+        )
+    if drift > 0 and abs(drift - elapsed_a) > max(TOLERANCE_S, elapsed_a * 0.5):
         return TimerVerdict(
             **base, first_value=a0, verdict="inconclusive",
             detail=f"{elapsed_a:.1f}초 동안 {drift}초 감소 — 실시간 초읽기와 속도가 맞지 않습니다.",

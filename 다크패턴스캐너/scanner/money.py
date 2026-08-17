@@ -23,6 +23,13 @@ TOTAL_LABEL = re.compile(
 # 총액이 아니라 "원래 가격"을 뜻하는 줄. 정가·할인 전 금액을 총액/신규비용으로 오인하지 않기 위함.
 STRIKE_LABEL = re.compile(r"정가|소비자가|할인\s*전|정상가|was\b|list\s*price", re.IGNORECASE)
 
+# 총액 표기가 없어 "화면 최대 금액"으로 갈음할 때, 몇 번째 가격 줄까지만 후보로 볼지.
+# 실제 상품 상세 페이지에는 "함께 사면 좋은 상품" 추천 위젯이 뒤에 잔뜩 붙어 있고
+# 그중 하나가 본 상품보다 비싸면 그게 "광고가"로 잘못 뽑힌다(실제 오롤리데이에서 확인:
+# 15,200원짜리 상품인데 추천 위젯의 26,000원짜리를 광고가로 오인). 본 상품 가격은
+# 페이지 앞부분에 있다고 보고 탐색 범위를 제한한다.
+EARLY_CANDIDATE_WINDOW = 20
+
 
 @dataclass
 class Amount:
@@ -64,6 +71,7 @@ def parse_amounts(text: str) -> list[Amount]:
 
 def line_items(page_text: str) -> list[LineItem]:
     items: list[LineItem] = []
+    seen_raw: set[str] = set()
     for raw_line in page_text.splitlines():
         line = raw_line.strip()
         if not line:
@@ -71,6 +79,12 @@ def line_items(page_text: str) -> list[LineItem]:
         amounts = parse_amounts(line)
         if not amounts:
             continue
+        # 마퀴/티커 배너는 무한 스크롤 효과를 위해 같은 문구를 DOM에 여러 번 반복해
+        # 넣는 경우가 흔하다(실제 오롤리데이 홈에서 확인). 그대로 두면 이 반복이
+        # "화면 앞부분"을 다 차지해 뒤에 나오는 진짜 가격 정보를 밀어낸다.
+        if line in seen_raw:
+            continue
+        seen_raw.add(line)
         # 금액 표기를 지운 나머지를 항목명으로 본다.
         label = line
         for a in amounts:
@@ -98,8 +112,10 @@ def page_total(page_text: str) -> tuple[Amount | None, str]:
             return amount, f"'{chosen.label}' 줄에서 읽음"
 
     # 총액 표기가 없으면 화면 최대 금액으로 갈음하되, 할인 전 정가는 후보에서 뺀다.
+    # 뒤쪽 추천 위젯의 다른 상품 가격까지 후보로 삼지 않도록 앞부분으로 범위를 좁힌다.
     candidates = [
-        it for it in items if it.max_amount and not STRIKE_LABEL.search(it.label)
+        it for it in items[:EARLY_CANDIDATE_WINDOW]
+        if it.max_amount and not STRIKE_LABEL.search(it.label)
     ]
     biggest = max(candidates, key=lambda it: it.max_amount.value, default=None)
     if biggest and biggest.max_amount:
