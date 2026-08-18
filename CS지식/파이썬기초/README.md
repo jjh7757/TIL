@@ -14,3 +14,4 @@
 10. [딕셔너리](10_딕셔너리.md) — 키-밸류 쌍, `get`/`pop`/`keys`/`values`/`items`, 딕셔너리 리스트로 구조화하기
 11. [함수](11_함수.md) — 함수의 구조와 필요성, 매개변수·인자·반환값, 자주 쓰는 내장함수
 12. [모듈](12_모듈.md) — `import`, math·random·collections·itertools 표준 모듈
+13. [스코프](13_스코프.md) — LEGB 규칙, enclosed·global, `global` 키워드, block scope 없음
