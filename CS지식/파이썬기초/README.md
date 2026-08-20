@@ -12,7 +12,7 @@
 8. [문자열](08_문자열.md) — 문자열 연산·인덱싱·슬라이싱, f-string 포매팅, 주요 메서드, 아스키코드
 9. [집합과 튜플](09_집합과튜플.md) — 교집합·합집합·차집합, `remove` vs `discard`, 변경 불가능한 리스트로서의 튜플
 10. [딕셔너리](10_딕셔너리.md) — 키-밸류 쌍, `get`/`pop`/`keys`/`values`/`items`, 딕셔너리 리스트로 구조화하기
-11. [함수](11_함수.md) — 함수의 구조와 필요성, 매개변수·인자·반환값, 자주 쓰는 내장함수
+11. [함수](11_함수.md) — 함수의 구조와 필요성, 매개변수·인자·반환값, 자주 쓰는 내장함수, `max`/`sorted`의 `key`와 람다, 콜스택
 12. [모듈](12_모듈.md) — `import`, math·random·collections·itertools 표준 모듈
 13. [스코프](13_스코프.md) — LEGB 규칙, enclosed·global, `global` 키워드, block scope 없음
 14. [예외 처리](14_예외처리.md) — try/except 기본 구조, 특정·다중 예외 처리, else/finally, raise, 사용자 정의 예외

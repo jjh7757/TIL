@@ -65,7 +65,45 @@ except requests.exceptions.RequestException as error:
 
 [예외 처리](파이썬기초/14_예외처리.md)에서 다룬 `try`/`except`/`as` 구조가 그대로 적용된다 — 다만 무엇을 `except`로 잡을지가 `requests`가 정의한 예외 계층을 아는 것에 달려 있다는 점이 다르다.
 
+## 실전 예제 — 인증이 필요한 API (TMDB)
+
+토큰이 필요한 API는 [환경변수](환경변수관리.md)에 넣어둔 값을 `headers`의 `Authorization`으로 실어 보낸다. 데이터를 가져오는 함수 내부에서는 `raise_for_status()`로 실패만 알리고, 실제 예외 처리(`try`/`except`)는 그 함수를 호출하는 쪽에서 담당하게 하면 "데이터를 가져오는 로직"과 "실패했을 때 어떻게 할지"가 섞이지 않는다.
+
+```python
+import os
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def get_movies(what="now_playing", page=1):
+    url = f"https://api.themoviedb.org/3/movie/{what}"
+    token = os.getenv("TMDB_TOKEN")
+
+    headers = {"Authorization": f"Bearer {token}"}
+    params = {"language": "ko-kr", "page": page}
+
+    response = requests.get(url, headers=headers, params=params)
+    response.raise_for_status()   # 실패하면 여기서 예외만 던지고, 처리는 호출부 몫
+
+    return response.json().get("results")
+
+def get_best_movie(movies):
+    return max(movies, key=lambda movie: movie["vote_average"])   # 평점 기준 최댓값
+
+try:
+    movies = get_movies()
+    best_movie = get_best_movie(movies)
+    print(best_movie["title"], best_movie["vote_average"])
+except Exception as e:
+    print("오류 발생!", e)
+```
+
+[함수](파이썬기초/11_함수.md#정렬최댓값-기준-지정--key와-람다)에서 다룬 `max(..., key=...)`와 람다가 실제 API 응답(딕셔너리 리스트)을 다룰 때 이렇게 쓰인다.
+
 ## 참고
 
 - [API 기초](API기초.md)
 - [예외 처리](파이썬기초/14_예외처리.md)
+- [함수 — key와 람다](파이썬기초/11_함수.md)
+- [환경변수와 .env 관리](환경변수관리.md)
