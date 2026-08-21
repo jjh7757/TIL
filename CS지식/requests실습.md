@@ -101,9 +101,69 @@ except Exception as e:
 
 [함수](파이썬기초/11_함수.md#정렬최댓값-기준-지정--key와-람다)에서 다룬 `max(..., key=...)`와 람다가 실제 API 응답(딕셔너리 리스트)을 다룰 때 이렇게 쓰인다.
 
+## 실전 예제 2 — 공공데이터 API 재시도와 로컬 캐싱 (미세먼지 API)
+
+공공데이터포털처럼 서비스 키를 URL 인코딩된 채로 발급하는 API는, `params`에 그대로 넣으면 requests가 다시 한 번 인코딩해서 이중 인코딩이 될 수 있다. `urllib.parse.unquote`로 먼저 디코딩한 값을 넘긴다.
+
+```python
+from urllib.parse import unquote
+
+params = {"serviceKey": unquote(api_key), "returnType": "json", ...}
+```
+
+500번대 에러(예: 504 Timeout)는 서버 쪽 문제로, 잠시 후 다시 요청하면 성공하는 경우가 많다. 정해진 횟수만큼 재시도하고, 시도 사이에 `time.sleep`으로 간격을 둔다.
+
+```python
+import time
+
+def get_dust_info(attempt=3):
+    for _ in range(attempt):
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            return response.json()["response"]["body"]["items"]
+        except Exception as e:
+            print("오류발생", e)
+            time.sleep(1)
+```
+
+**문자열 비교 함정** — API가 숫자를 문자열로 내려주면서 결측치를 `'-'` 같은 값으로 표시하는 경우가 있다. 이런 데이터를 그대로 `min`/`max`에 넘기면 타입이 섞여 비교가 실패한다. 결측치는 건너뛰고, 나머지는 `int()`/`float()`로 형변환한 뒤 비교해야 한다.
+
+```python
+min_value = float("inf")
+min_item = None
+for item in items:
+    pm25 = item.get("pm25Value")
+    if pm25 == "-":       # 결측치는 건너뜀
+        continue
+    if min_value > int(pm25):
+        min_value = int(pm25)
+        min_item = item
+```
+
+**응답을 로컬 파일로 캐싱하기** — 매번 API를 호출하는 대신, 한 번 받은 응답을 JSON 파일로 저장해두고 이후에는 그 파일을 읽어 "가짜 API"처럼 쓸 수 있다. API 호출 한도를 아끼거나, 응답이 느린 API로 반복 실습할 때 유용하다.
+
+```python
+import json
+
+with open("data.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=4)
+
+with open("data.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+```
+
+**리스트를 딕셔너리로 재구성하기** — `stationName`처럼 특정 값으로 반복 조회해야 한다면, 리스트를 매번 순회해서 찾는 대신 처음에 한 번 `{이름: 항목}` 형태의 딕셔너리로 바꿔두면 이후 조회가 훨씬 빠르고 코드도 간단해진다.
+
+```python
+station_map = {item["stationName"]: item for item in items}
+print(station_map["관악구"])
+```
+
 ## 참고
 
 - [API 기초](API기초.md)
 - [예외 처리](파이썬기초/14_예외처리.md)
 - [함수 — key와 람다](파이썬기초/11_함수.md)
 - [환경변수와 .env 관리](환경변수관리.md)
+- 공공 데이터 API: [서울 열린데이터광장](https://data.seoul.go.kr/), [문화공공데이터광장](https://www.culture.go.kr/data/main/main.do), [공공데이터포털](https://www.data.go.kr/index.do), [업비트](https://docs.upbit.com/kr)
