@@ -36,6 +36,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-20 | [함수 — key와 람다, 콜스택](CS지식/파이썬기초/11_함수.md) — `max`/`sorted`에 비교 기준 함수를 넘기는 `key` 인자와 람다(익명함수), 함수 호출이 스택처럼 쌓이고(push) 반환되며 빠지는(pop) 콜스택 동작, [환경변수와 .env 관리](CS지식/환경변수관리.md) — `python-dotenv`로 `.env` 읽기, 토큰을 코드에 직접 적지 않는 이유, `.env.example`로 필요한 키만 공유하는 관례, [requests로 API 호출하기](CS지식/requests실습.md) — TMDB API 실전 예제 추가(Bearer 토큰 인증, 함수 내부에서는 raise만 하고 호출부에서 예외 처리, `max(key=...)`로 평점 최고 영화 찾기) |
 | 2026-08-21 | [클래스](CS지식/파이썬기초/15_클래스.md) — 인스턴스 변수와 클래스 변수의 공유·가리기(shadowing), 매직 메서드(`__str__`/`__len__`/`__gt__`)로 내장 함수·연산자와 연결하기, `@property`/`setter`로 유효성 검사가 붙은 접근자 만들기, `@classmethod`, 메서드에 데코레이터 적용하기, [클래스 상속](CS지식/파이썬기초/16_클래스상속.md) — 메서드 오버라이딩, `super()`로 부모 생성자·메서드 재사용, 다중 상속, [requests로 API 호출하기](CS지식/requests실습.md) — 공공데이터포털 미세먼지 API 실전 예제 추가(서비스 키 `unquote` 디코딩, 504 에러 재시도 로직, 문자열 결측치(`'-'`) 비교 함정, 응답을 JSON 파일로 캐싱해 재사용하기, 리스트를 딕셔너리로 재구성해 조회 최적화) |
 | 2026-08-24 | [추상 클래스와 다형성](CS지식/파이썬기초/17_추상클래스와다형성.md) — 덕타이핑으로 상속 없이도 같은 인터페이스로 여러 객체 다루기, `abc`/`abstractmethod`로 자식이 반드시 구현해야 하는 메서드를 강제해 미구현을 인스턴스 생성 시점에 바로 에러로 잡기, [합성과 의존성 주입](CS지식/파이썬기초/18_합성과의존성주입.md) — 상속(is-a) vs 합성(has-a), 로거·전원 공급 객체를 생성자로 주입해 구현체를 갈아 끼우는 패턴, 게임 캐릭터(직업·무기 합성)와 스마트홈 허브(프로토콜 호환성 체크) 실전 예제, [타입 힌트와 독스트링](CS지식/파이썬기초/19_타입힌트와독스트링.md) — 변수·함수·클래스 타입 힌트, `int \| str` 합집합 타입, 강제성 없는 힌트의 한계, 독스트링과 `__doc__`/`help()` |
+| 2026-08-25 | [합성과 의존성 주입](CS지식/파이썬기초/18_합성과의존성주입.md)에 자판기 실전 예제 추가 — 결제 성공/실패 판단을 `Payment` 구현체에 위임, "상품 없음"·"재고 없음"을 사용자 정의 예외로 표현해 발생 지점과 처리 지점 분리, [추가 문법 모음](CS지식/파이썬기초/20_추가문법모음.md) — `*args`/`**kwargs`, 패킹·언패킹, 얕은/깊은 복사, `with`, `__str__` vs `__repr__`, `is` vs `==`, `TypeVar` 제네릭, `Protocol`로 런타임 강제 없이 덕 타이핑에 정적 타입 검사 더하기, 제너레이터(`yield`), [Gemini API 실습](CS지식/Gemini_API실습.md) — Interactions API로 LLM 호출, `input` 세 가지 형태, 대화 맥락(수동 history vs `store=True` 서버 저장·분기), `generation_config`, `ClientError`/`ServerError` 처리, [Gemini 구조화 출력](CS지식/Gemini_구조화출력.md) — Pydantic 모델로 JSON Schema 생성해 응답 형식 강제, `model_validate_json()`으로 파싱·검증 동시에 하기 |
 
 ## 목차
 
@@ -103,8 +104,10 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [웹 서비스 구조](CS지식/웹서비스구조.md) — Client-Server(FE/BE) 구조, HTTP(요청/응답)와 API 통신 정리
 - [웹 디자인 기초](CS지식/웹디자인기초.md) — 화면 설계 전 방향을 잡는 무드보드(Pinterest 활용법·AI로 디자인 시스템/프로토타입 뽑는 프롬프트 예시 포함), 미디어 쿼리·뷰포트 기반 반응형 웹과 모바일 퍼스트 전략 비교
 - [RSS 기초](CS지식/RSS기초.md) — RSS 동작 방식과 예시 구조, 알고리즘 없이 구독하는 장점, 웹훅과의 pull/push 차이
-- [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문·문자열·집합과 튜플·딕셔너리·함수·모듈·스코프·예외 처리·클래스·클래스 상속·추상 클래스와 다형성·합성과 의존성 주입·타입 힌트와 독스트링 19개 주제 정리
+- [파이썬 기초](CS지식/파이썬기초/README.md) — 변수·자료형·연산자·입출력·조건문·리스트·반복문·문자열·집합과 튜플·딕셔너리·함수·모듈·스코프·예외 처리·클래스·클래스 상속·추상 클래스와 다형성·합성과 의존성 주입·타입 힌트와 독스트링·추가 문법 모음 20개 주제 정리
 - [컨테이너 기반 배포 기초](CS지식/컨테이너배포기초.md) — 컨테이너 vs VM, Dockerfile·이미지·레지스트리 흐름, 배포 대상(관리형 컨테이너 서비스/쿠버네티스/VM/PaaS) 비교, Docker Compose
 - [알고리즘](CS지식/알고리즘/README.md) — 2차원 배열과 참조 함정, 델타 탐색으로 상하좌우 이웃 확인, 회문 판별 네 가지 방법, 카운팅·버블·선택 정렬, 큐와 스택(deque), 나선형 배열 6개 주제 정리
 - [requests로 API 호출하기](CS지식/requests실습.md) — GET/POST/PATCH/PUT/DELETE 메서드별 사용법, params·headers 옵션, Timeout·HTTPError 예외 처리, TMDB 인증 API·공공데이터 미세먼지 API 실전 예제
 - [환경변수와 .env 관리](CS지식/환경변수관리.md) — `python-dotenv`로 `.env` 읽기, `.env`를 커밋하지 않고 `.env.example`만 공유하는 이유
+- [Gemini API 실습](CS지식/Gemini_API실습.md) — Interactions API 기본 흐름, `input`의 문자열/Content 배열/Step 배열, `system_instruction`, 수동 history vs `store=True`+`previous_interaction_id` 대화 이어가기·분기, `generation_config`, `ClientError`/`ServerError` 처리
+- [Gemini 구조화 출력](CS지식/Gemini_구조화출력.md) — Pydantic 모델로 JSON Schema 생성, `response_format`으로 응답 형식 강제, `model_validate_json()`으로 파싱과 검증 함께 하기
