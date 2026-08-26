@@ -155,3 +155,6 @@ def ask_gemini(prompt: str) -> str | None:
 - [requests로 API 호출하기](requests실습.md)
 - [예외 처리](파이썬기초/14_예외처리.md)
 - [Gemini 구조화 출력](Gemini_구조화출력.md)
+- [Gemini 함수 호출](Gemini_함수호출.md)
+- [Gemini 내장 도구](Gemini_내장도구.md)
+- [Gemini 스트리밍 응답](Gemini_스트리밍.md)

@@ -37,6 +37,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-21 | [클래스](CS지식/파이썬기초/15_클래스.md) — 인스턴스 변수와 클래스 변수의 공유·가리기(shadowing), 매직 메서드(`__str__`/`__len__`/`__gt__`)로 내장 함수·연산자와 연결하기, `@property`/`setter`로 유효성 검사가 붙은 접근자 만들기, `@classmethod`, 메서드에 데코레이터 적용하기, [클래스 상속](CS지식/파이썬기초/16_클래스상속.md) — 메서드 오버라이딩, `super()`로 부모 생성자·메서드 재사용, 다중 상속, [requests로 API 호출하기](CS지식/requests실습.md) — 공공데이터포털 미세먼지 API 실전 예제 추가(서비스 키 `unquote` 디코딩, 504 에러 재시도 로직, 문자열 결측치(`'-'`) 비교 함정, 응답을 JSON 파일로 캐싱해 재사용하기, 리스트를 딕셔너리로 재구성해 조회 최적화) |
 | 2026-08-24 | [추상 클래스와 다형성](CS지식/파이썬기초/17_추상클래스와다형성.md) — 덕타이핑으로 상속 없이도 같은 인터페이스로 여러 객체 다루기, `abc`/`abstractmethod`로 자식이 반드시 구현해야 하는 메서드를 강제해 미구현을 인스턴스 생성 시점에 바로 에러로 잡기, [합성과 의존성 주입](CS지식/파이썬기초/18_합성과의존성주입.md) — 상속(is-a) vs 합성(has-a), 로거·전원 공급 객체를 생성자로 주입해 구현체를 갈아 끼우는 패턴, 게임 캐릭터(직업·무기 합성)와 스마트홈 허브(프로토콜 호환성 체크) 실전 예제, [타입 힌트와 독스트링](CS지식/파이썬기초/19_타입힌트와독스트링.md) — 변수·함수·클래스 타입 힌트, `int \| str` 합집합 타입, 강제성 없는 힌트의 한계, 독스트링과 `__doc__`/`help()` |
 | 2026-08-25 | [합성과 의존성 주입](CS지식/파이썬기초/18_합성과의존성주입.md)에 자판기 실전 예제 추가 — 결제 성공/실패 판단을 `Payment` 구현체에 위임, "상품 없음"·"재고 없음"을 사용자 정의 예외로 표현해 발생 지점과 처리 지점 분리, [추가 문법 모음](CS지식/파이썬기초/20_추가문법모음.md) — `*args`/`**kwargs`, 패킹·언패킹, 얕은/깊은 복사, `with`, `__str__` vs `__repr__`, `is` vs `==`, `TypeVar` 제네릭, `Protocol`로 런타임 강제 없이 덕 타이핑에 정적 타입 검사 더하기, 제너레이터(`yield`), [Gemini API 실습](CS지식/Gemini_API실습.md) — Interactions API로 LLM 호출, `input` 세 가지 형태, 대화 맥락(수동 history vs `store=True` 서버 저장·분기), `generation_config`, `ClientError`/`ServerError` 처리, [Gemini 구조화 출력](CS지식/Gemini_구조화출력.md) — Pydantic 모델로 JSON Schema 생성해 응답 형식 강제, `model_validate_json()`으로 파싱·검증 동시에 하기 |
+| 2026-08-26 | [Gemini 함수 호출](CS지식/Gemini_함수호출.md) — 모델은 실행 권한이 없고 `function_call`로 요청만 한다는 원칙, 도구 schema 작성, `call_id`로 호출과 결과 짝짓기, 여러 도구 중 모델이 스스로 선택, 반복 호출을 자동 처리하는 Agent loop와 최대 반복 횟수 제한, [Gemini 내장 도구](CS지식/Gemini_내장도구.md) — `code_execution`/`google_search`를 Gemini 서버가 직접 실행하는 방식과 커스텀 Function Calling의 차이, 두 종류를 한 `tools` 목록에 함께 등록하기, [Gemini 스트리밍 응답](CS지식/Gemini_스트리밍.md) — SSE와 제너레이터로 이해하는 스트리밍 원리, `step.delta` 조각을 실시간 출력하며 이어붙여 전체 응답 재구성하기 |
 
 ## 목차
 
@@ -111,3 +112,6 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [환경변수와 .env 관리](CS지식/환경변수관리.md) — `python-dotenv`로 `.env` 읽기, `.env`를 커밋하지 않고 `.env.example`만 공유하는 이유
 - [Gemini API 실습](CS지식/Gemini_API실습.md) — Interactions API 기본 흐름, `input`의 문자열/Content 배열/Step 배열, `system_instruction`, 수동 history vs `store=True`+`previous_interaction_id` 대화 이어가기·분기, `generation_config`, `ClientError`/`ServerError` 처리
 - [Gemini 구조화 출력](CS지식/Gemini_구조화출력.md) — Pydantic 모델로 JSON Schema 생성, `response_format`으로 응답 형식 강제, `model_validate_json()`으로 파싱과 검증 함께 하기
+- [Gemini 함수 호출](CS지식/Gemini_함수호출.md) — 도구 schema 정의, `function_call`/`function_result` 왕복, 여러 도구 중 모델이 스스로 선택, 반복 호출을 처리하는 Agent loop
+- [Gemini 내장 도구](CS지식/Gemini_내장도구.md) — `code_execution`/`google_search`를 Gemini 서버가 직접 실행, 커스텀 함수와 함께 등록해 쓰기
+- [Gemini 스트리밍 응답](CS지식/Gemini_스트리밍.md) — SSE와 제너레이터로 이해하는 스트리밍 원리, `step.delta` 조각을 모아 전체 응답 재구성하기
