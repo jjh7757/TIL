@@ -59,6 +59,27 @@ client.interactions.create(
 
 `user_input`은 대화의 **단계(Step)**이고, 그 안의 `text`/`image` 등은 단계에 담기는 **내용(Content)**이다 — 문자열 입력은 이 구조의 축약형일 뿐이다.
 
+Content의 `type`은 [멀티모달](Gemini_멀티모달.md)에서 이미지·오디오·문서까지 확장된다.
+
+| Content `type` | 내용 |
+|---|---|
+| `text` | 텍스트 |
+| `image` | 이미지 |
+| `audio` | 오디오 |
+| `document` | 문서(PDF 등) |
+
+Interaction 하나는 여러 Step으로 구성되고, 각 Step의 `type`은 누가 만들었는지·무슨 역할인지를 나타낸다.
+
+| Step `type` | 만드는 주체 | 의미 |
+|---|---|---|
+| `user_input` | 애플리케이션 | 사용자가 입력한 메시지 |
+| `thought` | 모델 | 모델의 reasoning을 이어주는 Step |
+| `function_call` | 모델 | 특정 함수를 주어진 인자로 실행해 달라는 요청 |
+| `function_result` | 애플리케이션 | 함수를 실행한 뒤 모델에 돌려주는 결과 |
+| `model_output` | 모델 | 사용자에게 전달할 최종 응답 |
+
+[함수 호출](Gemini_함수호출.md)의 일반적인 흐름은 이 Step 타입들로 표현하면 `user_input` → 모델의 `thought`/`function_call` → 애플리케이션의 `function_result` → 모델의 `model_output` 순서다.
+
 ## `system_instruction` — 답변 전반의 역할/규칙
 
 `system_instruction`은 매 요청에 적용되는 역할·톤·제약을, `input`은 이번에 처리할 실제 질문을 담는다.
@@ -158,3 +179,5 @@ def ask_gemini(prompt: str) -> str | None:
 - [Gemini 함수 호출](Gemini_함수호출.md)
 - [Gemini 내장 도구](Gemini_내장도구.md)
 - [Gemini 스트리밍 응답](Gemini_스트리밍.md)
+- [Gemini 멀티모달 입력](Gemini_멀티모달.md)
+- [Gemini 비동기 요청](Gemini_비동기요청.md)
