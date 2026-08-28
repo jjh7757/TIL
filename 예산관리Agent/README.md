@@ -19,6 +19,24 @@ AI Agent 엔지니어 부트캠프 파이썬 미니 프로젝트. 사용자가 �
 - `test_cases.py` — 함수 직접 호출 테스트와 자연어 Agent 테스트를 분리해 20여 개
   케이스로 구성. 실행 전후 거래 ID 스냅샷을 비교해 테스트가 새로 만든 거래만 자동으로 정리
 
+## 실행 방법
+
+```bash
+pip install -r requirements.txt
+```
+
+1. Google Cloud Console에서 서비스 계정을 만들고 Sheets API·Drive API를 활성화한 뒤,
+   JSON 키를 다운로드해 이 폴더에 `credentials.json`으로 저장
+2. 사용할 구글 시트를 그 서비스 계정 이메일과 편집자 권한으로 공유
+   (`거래내역`, `예산` 두 개의 시트 탭 필요 — 컬럼 구성은 `sheets.py`의 함수들 참고)
+3. `.env.example`을 `.env`로 복사하고 `GEMINI_API_KEY`, `SPREADSHEET_ID` 채우기
+4. 실행
+
+```bash
+python main.py          # 대화형 CLI로 실제 사용
+python test_cases.py    # 함수 직접 호출 + 자연어 Agent 테스트 20여 개 실행
+```
+
 ## 트러블슈팅 / 배운 점
 
 ### 1. tool 함수 시그니처와 호출 방식을 맞춰야 한다

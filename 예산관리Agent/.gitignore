@@ -1,0 +1,5 @@
+credentials.json
+.env
+__pycache__/
+report_*.md
+tool_call_log.jsonl
