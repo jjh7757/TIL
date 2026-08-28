@@ -39,6 +39,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-25 | [합성과 의존성 주입](CS지식/파이썬기초/18_합성과의존성주입.md)에 자판기 실전 예제 추가 — 결제 성공/실패 판단을 `Payment` 구현체에 위임, "상품 없음"·"재고 없음"을 사용자 정의 예외로 표현해 발생 지점과 처리 지점 분리, [추가 문법 모음](CS지식/파이썬기초/20_추가문법모음.md) — `*args`/`**kwargs`, 패킹·언패킹, 얕은/깊은 복사, `with`, `__str__` vs `__repr__`, `is` vs `==`, `TypeVar` 제네릭, `Protocol`로 런타임 강제 없이 덕 타이핑에 정적 타입 검사 더하기, 제너레이터(`yield`), [Gemini API 실습](CS지식/Gemini_API실습.md) — Interactions API로 LLM 호출, `input` 세 가지 형태, 대화 맥락(수동 history vs `store=True` 서버 저장·분기), `generation_config`, `ClientError`/`ServerError` 처리, [Gemini 구조화 출력](CS지식/Gemini_구조화출력.md) — Pydantic 모델로 JSON Schema 생성해 응답 형식 강제, `model_validate_json()`으로 파싱·검증 동시에 하기 |
 | 2026-08-26 | [Gemini 함수 호출](CS지식/Gemini_함수호출.md) — 모델은 실행 권한이 없고 `function_call`로 요청만 한다는 원칙, 도구 schema 작성, `call_id`로 호출과 결과 짝짓기, 여러 도구 중 모델이 스스로 선택, 반복 호출을 자동 처리하는 Agent loop와 최대 반복 횟수 제한, [Gemini 내장 도구](CS지식/Gemini_내장도구.md) — `code_execution`/`google_search`를 Gemini 서버가 직접 실행하는 방식과 커스텀 Function Calling의 차이, 두 종류를 한 `tools` 목록에 함께 등록하기, [Gemini 스트리밍 응답](CS지식/Gemini_스트리밍.md) — SSE와 제너레이터로 이해하는 스트리밍 원리, `step.delta` 조각을 실시간 출력하며 이어붙여 전체 응답 재구성하기 |
 | 2026-08-27 | [Gemini 멀티모달 입력](CS지식/Gemini_멀티모달.md) — 이미지·PDF·음성·동영상을 Base64/Files API/공개 URL로 전달하는 세 가지 방법과 각각이 적합한 상황, `response_format`으로 이미지 생성 요청하기, [비동기 기초](CS지식/파이썬기초/21_비동기기초.md) — 동기/비동기 차이, 이벤트 루프와 코루틴, `async`를 썼다고 자동으로 동시 실행되는 게 아니라는 점, `asyncio.gather()`로 여러 API 요청 동시 처리, Notebook과 `.py` 파일에서 `await` 사용법 차이, [Gemini 비동기 요청](CS지식/Gemini_비동기요청.md) — 비동기가 한 요청의 속도가 아니라 여러 독립 요청의 전체 대기 시간을 줄이는 것이라는 점, `client.aio`로 비동기 클라이언트 만들기, 동시 요청 개수를 제한해야 하는 이유 |
+| 2026-08-28 | [예산관리Agent — Gemini Function Calling 개인 예산 관리 Agent](예산관리Agent/README.md) — 구글시트를 저장소로 삼아 거래 등록·검색·수정·삭제와 카테고리별 월 예산 조회를 Gemini Function Calling으로 구현. tool 함수와 호출부의 언패킹 방식 불일치 버그, `additionalProperties: false`로도 못 막는 LLM의 비결정적 인자 추가, 검색 결과 다건 시 되묻게 만드는 system_instruction, `ValueError` 메시지가 Agent를 거쳐 사용자에게 그대로 전달되도록 예외 처리 계층 정리, `strptime`이 0패딩 안 된 날짜도 통과시키는 허점 발견 등 트러블슈팅 정리 |
 
 ## 목차
 
@@ -81,6 +82,9 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 
 ### 다크패턴스캐너 (보류)
 - [다크패턴 스캐너 — 쇼핑몰 다크패턴 자동 진단 프로토타입](다크패턴스캐너/README.md) — 카운트다운 리셋 탐지·체크아웃 단계별 총액 추적을 Playwright로 구현, fixture 6종 자체 검증(8/8) 후 실사이트 4곳 검증까지 마쳤으나 다크패턴 미발견으로 보류. [기획서](다크패턴스캐너/기획서.md)에 시장 근거·경쟁 조사·실사이트 검증 결과·보류 사유 전부 정리
+
+### 예산관리Agent
+- [예산관리Agent — Gemini Function Calling 개인 예산 관리 Agent](예산관리Agent/README.md) — 자연어로 수입/지출을 기록하고 예산을 관리하는 CLI 에이전트. 구글시트(gspread)를 저장소로 쓰고, Gemini Function Calling으로 거래 등록·검색·수정·삭제·예산 조회를 tool로 노출. 8가지 트러블슈팅(언패킹 방식 불일치, 스키마 제약의 한계, 검색 다건 시 되묻기, 예외 메시지 전달, 날짜 검증 허점, 빈 행 방어 등) 정리
 
 ### KIS-Agent-Notes (KIS 모의투자 텔레그램 에이전트 기획)
 [금융투자봇](n8n실습/금융투자봇/README.md) 아이디어를 5일 개인 프로젝트로 구체화한 기획서. [기준선 작성](프로그램방법론/기준선작성.md)의 12개 항목 템플릿을 그대로 적용해 기준선부터 실행계획까지 정리.
