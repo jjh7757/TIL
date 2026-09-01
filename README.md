@@ -40,6 +40,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-08-26 | [Gemini 함수 호출](CS지식/Gemini_함수호출.md) — 모델은 실행 권한이 없고 `function_call`로 요청만 한다는 원칙, 도구 schema 작성, `call_id`로 호출과 결과 짝짓기, 여러 도구 중 모델이 스스로 선택, 반복 호출을 자동 처리하는 Agent loop와 최대 반복 횟수 제한, [Gemini 내장 도구](CS지식/Gemini_내장도구.md) — `code_execution`/`google_search`를 Gemini 서버가 직접 실행하는 방식과 커스텀 Function Calling의 차이, 두 종류를 한 `tools` 목록에 함께 등록하기, [Gemini 스트리밍 응답](CS지식/Gemini_스트리밍.md) — SSE와 제너레이터로 이해하는 스트리밍 원리, `step.delta` 조각을 실시간 출력하며 이어붙여 전체 응답 재구성하기 |
 | 2026-08-27 | [Gemini 멀티모달 입력](CS지식/Gemini_멀티모달.md) — 이미지·PDF·음성·동영상을 Base64/Files API/공개 URL로 전달하는 세 가지 방법과 각각이 적합한 상황, `response_format`으로 이미지 생성 요청하기, [비동기 기초](CS지식/파이썬기초/21_비동기기초.md) — 동기/비동기 차이, 이벤트 루프와 코루틴, `async`를 썼다고 자동으로 동시 실행되는 게 아니라는 점, `asyncio.gather()`로 여러 API 요청 동시 처리, Notebook과 `.py` 파일에서 `await` 사용법 차이, [Gemini 비동기 요청](CS지식/Gemini_비동기요청.md) — 비동기가 한 요청의 속도가 아니라 여러 독립 요청의 전체 대기 시간을 줄이는 것이라는 점, `client.aio`로 비동기 클라이언트 만들기, 동시 요청 개수를 제한해야 하는 이유 |
 | 2026-08-28 | [예산관리Agent — Gemini Function Calling 개인 예산 관리 Agent](예산관리Agent/README.md) — 구글시트를 저장소로 삼아 거래 등록·검색·수정·삭제와 카테고리별 월 예산 조회를 Gemini Function Calling으로 구현. tool 함수와 호출부의 언패킹 방식 불일치 버그, `additionalProperties: false`로도 못 막는 LLM의 비결정적 인자 추가, 검색 결과 다건 시 되묻게 만드는 system_instruction, `ValueError` 메시지가 Agent를 거쳐 사용자에게 그대로 전달되도록 예외 처리 계층 정리, `strptime`이 0패딩 안 된 날짜도 통과시키는 허점 발견 등 트러블슈팅 정리 |
+| 2026-09-01 | [프롬프트 엔지니어링](CS지식/프롬프트엔지니어링.md) 대폭 보강 — 퓨샷 설계 원칙(대표 예시·경계 사례·균형 분포), 역할 부여가 지식이 아니라 관점·우선순위를 바꾸는 효과, 프롬프트로 유도 vs 스키마로 강제하는 출력 형식, XML 태그의 한계(보안 장치 아님), 명시적 단계 분해와 검증 가능한 결과 요청, 프롬프트 체이닝, temperature, 긴 컨텍스트 구조화, 반복 평가 방법론, [LangChain 기초](CS지식/LangChain_기초.md) — ChatModel과 메시지, PromptTemplate/ChatPromptTemplate, LCEL(`\|`)로 체인 연결, Runnable 인터페이스, RunnableLambda로 타입 변환, RunnablePassthrough로 context 주입, [LangChain 실행과 안정성](CS지식/LangChain_실행과안정성.md) — 토큰 모니터링, exponential backoff 재시도와 fallback 모델, 응답 캐싱, `batch`/`stream`과 `asyncio.gather()`의 역할 차이, [LangChain 구조화 출력](CS지식/LangChain_구조화출력.md) — Output Parser 5종 비교, JSON 문법/schema/domain/policy 4단계 검증, `with_structured_output()` vs `PydanticOutputParser`, 실패 원인(provider/파싱/검증)별 재시도·fallback 전략, [LangSmith 기초](CS지식/LangSmith_기초.md) — 환경변수만으로 자동 트레이싱, 태그·메타데이터로 실행 필터링, [LangChain 메모리](CS지식/LangChain_메모리.md) — stateless 호출, `InMemoryChatMessageHistory`로 세션별 관리, `trim_messages()`로 context window 관리, short-term vs long-term memory |
 
 ## 목차
 
@@ -99,7 +100,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 
 ### CS지식
 - [AI 리터러시 & LLM 애플리케이션 입문](CS지식/LLM_APP입문.md)
-- [프롬프트 엔지니어링](CS지식/프롬프트엔지니어링.md) — 좋은 프롬프트 4요소, 하네스/컨텍스트 엔지니어링, Claude Code 스킬 추가하는 방법, CoT·ReAct·Tree-of-Thought
+- [프롬프트 엔지니어링](CS지식/프롬프트엔지니어링.md) — 좋은 프롬프트 4요소, 하네스/컨텍스트 엔지니어링, Claude Code 스킬 추가하는 방법, CoT·ReAct·Tree-of-Thought, 퓨샷 설계 원칙, 역할 부여, 출력 형식 지정, XML 태그, 프롬프트 체이닝, temperature, 긴 컨텍스트 처리, 프롬프트 반복 평가
 - [URL 구조](CS지식/URL구조.md) — scheme/authority/path/query/fragment 등 URL 구성 요소 정리
 - [HTTP 기초](CS지식/HTTP기초.md) — 요청/응답 구조, 메서드, 상태 코드, 무상태 특징 정리
 - [HTTP 상태 코드](CS지식/HTTP상태코드.md) — 1XX~5XX 분류와 리다이렉션 개념 정리
@@ -122,3 +123,8 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [Gemini 스트리밍 응답](CS지식/Gemini_스트리밍.md) — SSE와 제너레이터로 이해하는 스트리밍 원리, `step.delta` 조각을 모아 전체 응답 재구성하기
 - [Gemini 멀티모달 입력](CS지식/Gemini_멀티모달.md) — 이미지·PDF·음성·동영상을 Base64/Files API/공개 URL로 전달, 이미지 생성
 - [Gemini 비동기 요청](CS지식/Gemini_비동기요청.md) — `client.aio`로 비동기 클라이언트 만들기, 독립적인 여러 LLM 요청을 `asyncio.gather()`로 동시 처리, 동시 요청 개수 제한 필요성
+- [LangChain 기초](CS지식/LangChain_기초.md) — LangChain 생태계, ChatModel과 메시지, PromptTemplate/ChatPromptTemplate, LCEL(`|`)과 Runnable, RunnableLambda·RunnablePassthrough
+- [LangChain 실행과 안정성](CS지식/LangChain_실행과안정성.md) — 토큰 모니터링, `max_retries`/`with_fallbacks()`, LLM 응답 캐싱, `invoke`/`batch`/`stream`과 `asyncio.gather()`의 차이
+- [LangChain 구조화 출력](CS지식/LangChain_구조화출력.md) — Output Parser 종류 비교, JSON 4단계 검증, `with_structured_output()` vs `PydanticOutputParser`, 실패 원인별 재시도·fallback
+- [LangSmith 기초](CS지식/LangSmith_기초.md) — 환경변수만으로 자동 트레이싱, 태그·메타데이터로 실행 구분, 선택적 추적
+- [LangChain 메모리](CS지식/LangChain_메모리.md) — stateless 호출과 수동 히스토리, `InMemoryChatMessageHistory`, `trim_messages()`로 context window 관리, short-term vs long-term memory
