@@ -168,4 +168,6 @@ chain.invoke({"question": "Python은 누가 만들었어?"})
 - [LangChain 실행과 안정성](LangChain_실행과안정성.md) — 토큰 모니터링, 에러 처리, 캐싱, batch/stream
 - [LangSmith 기초](LangSmith_기초.md)
 - [LangChain 메모리](LangChain_메모리.md)
+- [LangChain Tool과 기본 Agent](LangChain_Tool과Agent.md)
+- [RAG 기초](RAG_기초.md), [벡터 DB](벡터DB.md)
 - [프롬프트 엔지니어링](프롬프트엔지니어링.md)
