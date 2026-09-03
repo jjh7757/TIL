@@ -118,4 +118,6 @@ docs = retriever.invoke("AI 투자 규모는 어느 정도야?")
 ## 참고
 
 - [RAG 기초](RAG_기초.md)
+- [RAG 파이프라인](RAG_파이프라인.md)
+- [RAG 검색 고도화](RAG_검색고도화.md) — MMR·BM25·Hybrid Search·Re-ranking
 - [LangChain 기초](LangChain_기초.md) — Runnable, RunnablePassthrough

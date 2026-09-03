@@ -137,4 +137,6 @@ top2 = scores[:2]
 ## 참고
 
 - [벡터 DB](벡터DB.md) — 임베딩을 저장·검색하는 전용 데이터베이스
+- [RAG 파이프라인](RAG_파이프라인.md) — 검색 결과를 체인으로 엮어 답변 생성까지 연결하기
+- [RAG 검색 고도화](RAG_검색고도화.md) — MMR·BM25·Hybrid Search·Re-ranking
 - [Gemini 구조화 출력](Gemini_구조화출력.md) — 여기서도 쓰인 Pydantic 개념
