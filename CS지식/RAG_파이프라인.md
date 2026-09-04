@@ -106,3 +106,4 @@ def citation_rag(question: str):
 - [벡터 DB](벡터DB.md)
 - [RAG 검색 고도화](RAG_검색고도화.md)
 - [LangChain 기초](LangChain_기초.md) — `RunnablePassthrough`, LCEL
+- [RAG 평가](RAG_평가.md) — 이 체인이 만든 답변을 인용 검사·RAGAS·LLM-as-Judge로 평가하기

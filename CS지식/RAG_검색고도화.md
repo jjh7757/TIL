@@ -124,3 +124,4 @@ def rerank(question, candidates, top_k=5):
 - [벡터 DB](벡터DB.md)
 - [LangChain 기초](LangChain_기초.md) — Runnable, Retriever
 - [Gemini 구조화 출력](Gemini_구조화출력.md) — Re-ranking에 쓰인 `with_structured_output()`
+- [RAG 평가](RAG_평가.md) — 여기서 비교한 전략들을 Hit@k·Recall@k·MRR·RAGAS로 정량 비교하기

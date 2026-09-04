@@ -155,3 +155,4 @@ resilient_chain = primary_chain.with_fallbacks([fallback_chain])
 - [LangChain 기초](LangChain_기초.md)
 - [Gemini 구조화 출력](Gemini_구조화출력.md) — 같은 문제를 Gemini SDK 방식으로 다룰 때
 - [예외 처리](파이썬기초/14_예외처리.md)
+- [RAG 평가](RAG_평가.md) — `with_structured_output()`으로 인용·LLM-as-Judge 채점 결과를 구조화하는 예
