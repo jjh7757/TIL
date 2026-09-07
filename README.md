@@ -44,6 +44,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-09-02 | [LangChain Tool과 기본 Agent](CS지식/LangChain_Tool과Agent.md) — `@tool` 데코레이터로 함수를 Tool로 바꾸기(docstring이 설명, 타입 힌트가 스키마), `bind_tools()`는 실행이 아니라 요청만 만든다는 점, Tool 호출 루프, TMDB 목록·상세 조회를 세션별 메모리와 엮은 실전 Agent, [RAG 기초](CS지식/RAG_기초.md) — Document Loader/Text Splitter로 문서를 청크로 준비하기, `embed_query` vs `embed_documents`, 코사인 유사도로 직접 구현한 유사도 검색, [벡터 DB](CS지식/벡터DB.md) — 일반 DB와 다른 이유(ANN, HNSW/IVF), 메타데이터는 임베딩되지 않고 필터링에만 쓰인다는 점, Chroma로 저장·검색·필터링, 임베딩 모델을 바꾸면 벡터 DB를 재구축해야 하는 이유 |
 | 2026-09-03 | [RAG 파이프라인](CS지식/RAG_파이프라인.md) — 검색·포매팅·프롬프트·생성을 `RunnablePassthrough.assign()`과 딕셔너리 병렬 구성 두 가지 문법으로 체인 하나로 조합, retriever를 한 번만 호출해 답변과 출처를 함께 반환하기, 출처 번호도 LLM 생성이라 정확성이 보장되지 않는다는 주의점, [RAG 검색 고도화](CS지식/RAG_검색고도화.md) — 검색 문제는 알고리즘 이전에 문서 추출·청킹 품질부터 점검, MMR로 결과 다양성 확보(`fetch_k`/`lambda_mult`), 형태소 분석기를 붙인 BM25로 정확한 모델명 찾기, Metadata Filter는 관련성이 아니라 검색 범위를 강제하는 용도, EnsembleRetriever의 RRF로 벡터 검색과 BM25 결합, `with_structured_output()`으로 후보를 점수 매겨 재정렬(Re-ranking)하되 후보 본문을 신뢰할 수 없는 입력으로 다뤄야 하는 이유 |
 | 2026-09-04 | [RAG 평가](CS지식/RAG_평가.md) — 검색 평가(Hit@k·Precision@k·Recall@k·MRR)와 답변 평가(인용 규칙 검사·RAGAS·LLM-as-Judge)를 분리해서 측정하는 이유, easy/medium/hard를 섞은 평가 데이터셋 설계, Faithfulness·Answer Relevancy 두 점수를 함께 읽는 법, 도메인 채점 기준(정확성·완전성·근거성·출처 정확성)을 직접 정의하는 LLM-as-Judge, File Hit과 Page Hit처럼 정답 단위를 무엇으로 잡을지에 따라 같은 검색 결과도 다르게 평가된다는 점 |
+| 2026-09-07 | [RAG 실험 스크립트](CS지식/RAG_실험스크립트.md) — 실험 조건을 config로, 실행 시점 값은 CLI 인자로 분리해 청킹·검색 전략·k·hybrid_weights를 반복 비교하는 구조, 벡터스토어를 전략 수만큼 다시 만들지 않기, Gemini 무료 티어 RPM 제한(연속 요청 시 5회 이후 429, 약 50초 뒤 복구) 발견과 재시도(지수 백오프)·쿼리 임베딩 캐싱·페이싱 3중 대응, 문항 35개 기준 MRR 차이의 통계적 유의성을 표본 크기로 판단하기, 정답 출처가 리스트가 아닌 단일 필드일 때 `relevant_citation` 조건 단순화 |
 
 ## 목차
 
@@ -137,3 +138,4 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [RAG 파이프라인](CS지식/RAG_파이프라인.md) — 검색·포매팅·프롬프트·생성을 `RunnablePassthrough.assign()`/딕셔너리 병렬 구성으로 체인 하나로 엮기, Inline Citation/Source List로 출처 표시
 - [RAG 검색 고도화](CS지식/RAG_검색고도화.md) — MMR로 결과 다양성 확보, BM25로 정확한 키워드 검색, Metadata Filter로 검색 범위 강제, Hybrid Search(RRF), LLM 기반 Re-ranking
 - [RAG 평가](CS지식/RAG_평가.md) — 검색 평가(Hit@k/Precision@k/Recall@k/MRR)와 답변 평가(인용 검사/RAGAS/LLM-as-Judge) 분리, Faithfulness·Answer Relevancy 조합 해석, 도메인 특화 LLM-as-Judge 설계, File Hit vs Page Hit
+- [RAG 실험 스크립트](CS지식/RAG_실험스크립트.md) — config/CLI 분리로 청킹·검색 전략·k·hybrid_weights 반복 비교, Gemini 무료 티어 RPM 제한 실측(연속 요청 5회 이후 429)과 재시도·쿼리 임베딩 캐싱·페이싱 대응, 표본 크기 대비 MRR 차이의 통계적 유의성 판단
