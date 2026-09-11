@@ -133,14 +133,10 @@ EC2의 유일한 실질 리스크는 모르는 사이 늘어나는 요금이다.
 
 ## 새 프로젝트를 배포하는 절차
 
-파이프라인이 한 번 갖춰진 뒤에는 이것만 하면 된다.
+**→ [새앱배포절차.md](새앱배포절차.md)** 에 명령어·주의점·체크리스트까지 정리했다.
 
-1. ECR 리포지토리 생성
-2. 저장소에 `Dockerfile` + `templates/app-compose.yml` 복사
-3. `templates/deploy.yml`을 `.github/workflows/`에 복사하고 `APP_NAME` 수정
-4. 서버에 `/srv/<앱이름>/` 만들고 compose 파일과 `.env` 배치
-5. Caddyfile에 3줄 추가 후 `docker compose exec caddy caddy reload`
-6. `git push`
+요약하면 앱마다 한 번 15~20분(ECR·IAM·저장소·서버 compose·DNS·Caddy),
+그 뒤로는 `git push`만 하면 된다.
 
 ## 미리 알아둘 함정
 
