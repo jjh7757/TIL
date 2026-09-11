@@ -1,0 +1,29 @@
+# /srv/<앱이름>/docker-compose.yml
+# deploy-app 스크립트가 ECR_REGISTRY / APP_NAME / IMAGE_TAG 를 넣어준다.
+services:
+  app:
+    image: ${ECR_REGISTRY}/${APP_NAME}:${IMAGE_TAG:-latest}
+    container_name: ${APP_NAME}
+    restart: unless-stopped
+    env_file:
+      - .env          # 서버에만 두고 절대 커밋하지 않는다
+    networks:
+      - web
+    # 호스트 포트를 열지 않는다. 외부 노출은 Caddy만 담당.
+    expose:
+      - "3000"        # 앱이 실제로 리슨하는 포트로 맞출 것
+    # RAM 2GB이므로 한 앱이 전부 먹지 않도록 상한을 둔다
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+networks:
+  web:
+    external: true

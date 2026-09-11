@@ -1,0 +1,25 @@
+# /srv/caddy/docker-compose.yml
+# 이 서버에서 80/443을 여는 유일한 컨테이너.
+# 앱 컨테이너는 호스트 포트를 열지 않고 'web' 네트워크로만 통신한다.
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data      # 발급받은 인증서. 지우면 재발급 횟수 제한에 걸릴 수 있다
+      - caddy_config:/config
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:

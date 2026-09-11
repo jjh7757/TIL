@@ -1,0 +1,32 @@
+# /srv/caddy/Caddyfile
+# 수정 후 반영: docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
+
+{
+	# 인증서 만료 알림 수신 주소
+	email junhyeong7757@gmail.com
+}
+
+# --- 앱 추가 템플릿 ----------------------------------------------------------
+# 새 앱은 이 3줄만 복사해서 서브도메인과 컨테이너 이름:포트를 바꾸면 된다.
+#
+# myapp.example.com {
+# 	reverse_proxy myapp:3000
+# }
+#
+# reverse_proxy 대상은 호스트 포트가 아니라 'web' 네트워크상의
+# 컨테이너 이름과 그 컨테이너가 실제로 리슨하는 포트다.
+
+# 예시 — 실제 도메인으로 바꿀 것
+# rag.example.com {
+# 	reverse_proxy rag:8000
+# }
+#
+# n8n.example.com {
+# 	reverse_proxy n8n:5678
+# }
+
+# 도메인을 아직 안 붙였다면 아래로 IP 접속 확인만 하고,
+# 도메인 연결 후에는 반드시 지울 것 (HTTPS가 안 걸린 상태이므로).
+:80 {
+	respond "caddy alive" 200
+}
