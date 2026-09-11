@@ -107,6 +107,8 @@ EC2의 유일한 실질 리스크는 모르는 사이 늘어나는 요금이다.
 - [ ] Elastic IP 할당 후 연결
 
 ### 2단계 — 서버 초기 세팅
+
+> 상세 절차: [02_서버세팅.md](02_서버세팅.md)
 - [ ] `templates/bootstrap.sh` 실행 (스왑, Docker, `web` 네트워크, 디렉토리 규칙, 배포 스크립트)
 - [ ] `templates/caddy/` 로 Caddy 기동
 
