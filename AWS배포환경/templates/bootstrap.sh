@@ -110,7 +110,10 @@ docker compose pull
 docker compose up -d
 
 echo "==> 오래된 이미지 정리"
-docker image prune -f
+# prune -f 는 dangling(태그 없는) 이미지만 지운다. 배포마다 커밋 SHA 태그가 새로 붙으므로
+# 이전 버전들은 태그가 남아 계속 쌓인다. 이미지가 큰 앱에서는 디스크를 금방 채운다.
+# -a 로 컨테이너가 참조하지 않는 이미지까지, until 로 최근 것은 롤백용으로 남긴다.
+docker image prune -af --filter "until=72h"
 
 echo "==> 현재 상태"
 docker compose ps
