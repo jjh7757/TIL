@@ -2,6 +2,15 @@
 
 AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소입니다.
 
+**이력서 → https://jjh7757.github.io/resume/**
+
+여기서 배운 것을 실제로 올려 운영 중인 서비스입니다.
+
+- [공공문서 RAG 질의응답](https://rag.ai-agent-develop.cloud) — 하이브리드 검색(벡터+BM25), 검색 전략 4종 비교 ([코드](https://github.com/jjh7757/rag-web) · [배포 기록](AWS배포환경/rag앱배포기록.md))
+- [왜샀어(WhyBuy)](https://whybuy.ai-agent-develop.cloud) — 근거를 남겨야 완료되는 모의투자 서비스 ([코드](https://github.com/jjh7757/whybuy) · [구현 정리](vercel실습/왜샀어/왜샀어구현.md))
+
+두 서비스 모두 [직접 구축한 배포 환경](AWS배포환경/README.md) 위에서 `git push` 한 번으로 갱신됩니다.
+
 ## 학습 타임라인 (날짜 → 문서)
 
 각 문서를 처음 커밋한 날짜 기준입니다.
