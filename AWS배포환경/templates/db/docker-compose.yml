@@ -1,0 +1,62 @@
+# /srv/db/docker-compose.yml
+# 이 서버의 공용 DB. 앱마다 새로 띄우지 않고 database/사용자만 나눠서 공유한다.
+# 상세 배경: ../../DB환경구성.md
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - .env          # POSTGRES_PASSWORD. 서버에만 두고 절대 커밋하지 않는다
+    environment:
+      POSTGRES_USER: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - web
+    # 호스트 포트를 열지 않는다. web 네트워크의 컨테이너만 postgres:5432 로 접근.
+    # 앱마다 RAM 60~100MB 정도 쓰는 걸 감안해 max_connections을 낮게 잡는다 —
+    # 앱 쪽 커넥션 풀도 5~10개로 작게 유지할 것.
+    command: postgres -c shared_buffers=64MB -c max_connections=50
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    env_file:
+      - .env          # REDIS_PASSWORD
+    volumes:
+      - redisdata:/data
+    networks:
+      - web
+    # maxmemory 도달 시 오래된 키부터 지운다(allkeys-lru) — 캐시/세션용이지,
+    # 유일한 저장소로 쓸 데이터를 넣으면 안 된다. 그런 용도면 postgres를 쓸 것.
+    command: redis-server --requirepass ${REDIS_PASSWORD} --maxmemory 96mb --maxmemory-policy allkeys-lru
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "--no-auth-warning", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  web:
+    external: true
+
+volumes:
+  pgdata:
+  redisdata:
