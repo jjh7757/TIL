@@ -35,7 +35,6 @@ check_disk() {
 
 # 배포된 앱이 늘어나면 이 줄만 추가하면 된다.
 check_url "deploy-test" "https://test.ai-agent-develop.cloud"
-check_url "rag" "https://rag.ai-agent-develop.cloud"
 check_container_health "postgres"
 check_container_health "redis"
 check_disk

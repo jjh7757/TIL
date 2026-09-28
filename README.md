@@ -6,10 +6,14 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 
 여기서 배운 것을 실제로 올려 운영 중인 서비스입니다.
 
-- [공공문서 RAG 질의응답](https://rag.ai-agent-develop.cloud) — 하이브리드 검색(벡터+BM25), 검색 전략 4종 비교 ([코드](https://github.com/jjh7757/rag-web) · [배포 기록](AWS배포환경/rag앱배포기록.md))
 - [왜샀어(WhyBuy)](https://whybuy.ai-agent-develop.cloud) — 근거를 남겨야 완료되는 모의투자 서비스 ([코드](https://github.com/jjh7757/whybuy) · [구현 정리](vercel실습/왜샀어/왜샀어구현.md))
 
-두 서비스 모두 [직접 구축한 배포 환경](AWS배포환경/README.md) 위에서 `git push` 한 번으로 갱신됩니다.
+[직접 구축한 배포 환경](AWS배포환경/README.md) 위에서 `git push` 한 번으로 갱신됩니다.
+
+**공공문서 RAG 질의응답**(하이브리드 검색·검색 전략 4종 비교, [코드](https://github.com/jjh7757/rag-web) ·
+[배포 기록](AWS배포환경/rag앱배포기록.md))은 2026-09-28에 배포를 내렸습니다 — 서버 자리를
+비워 새로 기획 중인 채용 매칭 에이전트에 쓰려는 목적으로, 프로젝트 자체가 실패했거나
+문제가 있어서가 아닙니다.
 
 ## 학습 타임라인 (날짜 → 문서)
 
@@ -66,6 +70,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-09-20 | [공용 DB 서버 구성 — PostgreSQL + Redis](AWS배포환경/DB환경구성.md) — 즉시 배포되는 앱과 달리 손대지 않았던 DB를, 앱마다 새로 띄우지 않고 컨테이너 하나를 공유하며 database/role(Postgres)·DB 인덱스(Redis)로만 나누는 구조로 설계. 원티드 "서버 개발자" 공고(628건) 기술스택 태그를 API로 직접 집계해 MySQL 38 · PostgreSQL 35 · Redis 33건으로 상위 3개가 사실상 동률임을 확인하고, 그 타이브레이커로 `pgvector`(RAG 프로젝트의 벡터 검색을 같은 DB로 흡수 가능)를 근거로 PostgreSQL을 채택. RAM 2GB 서버에 DB 상주 비용(384MB)을 반영해 "앱 2개는 편하다"던 기존 여유를 "앱 1~2개 + DB"로 재계산. 로컬에 AWS CLI를 설치해 SSM으로 실제 EC2에 적용까지 완료(AWS-RunShellScript가 기본 `/bin/sh`(dash)를 써서 `set -o pipefail`이 깨지는 문제, 빈 crontab에서 `grep -v`가 exit 1을 내 `set -e`에 걸리는 문제 해결). 이어서 로컬 백업이 DB와 같은 EBS 볼륨에 있어 인스턴스·볼륨이 통째로 사라지면 백업까지 같이 잃는 약점을 발견해 S3 오프사이트 백업 추가 — 버킷은 Public Access Block·SSE-S3·30일 수명주기 규칙으로, 서버 IAM 역할엔 그 버킷 한정 `PutObject`만 최소 권한으로 부여. "백업 존재"가 아니라 "복구 가능"을 증명하려고 테스트 DB 생성→백업→`DROP DATABASE`로 재해 시뮬레이션→복구까지 실제로 수행(서버엔 S3 읽기 권한을 주지 않고, 로컬 admin 자격증명으로 발급한 presigned URL을 서버가 curl로 받는 방식으로 최소 권한 유지). 마지막으로 [모니터링/알림](AWS배포환경/모니터링구성.md) 추가 — RAM이 빠듯해 Uptime Kuma 같은 상주 컨테이너 대신 cron 5분 간격 스크립트로 앱 HTTP 200·DB healthcheck·디스크 사용률을 확인하고 SNS로 이메일 알림(외부에 노출 안 하는 DB까지 보려면 외부 모니터링 서비스로는 안 되고 서버 내부에서 확인해야 한다는 점), 매번 알리지 않고 상태 전이 시에만 알리도록 설계, redis 컨테이너를 실제로 중지·재시작해 이상 감지·정상 복구 알림이 둘 다 발행되는 것까지 검증, [요구사항 명세서 작성법](프로그램방법론/요구사항명세서작성법.md) — 기준선 다음 단계로, 서비스마다 반복해 쓰는 요구사항 명세서 작성 규칙 정리. 주어 명시·한 문장 한 요구·검증 불가능한 표현(빠르게·안정적으로) 치환·What과 How 분리 같은 문장 규칙, FR/NFR/CON/ASM/OUT/ISS ID 체계와 번호 재사용 금지, 요구사항마다 인수 조건 3줄(정상·예외·경계), 성능·용량·가용성·보안·개인정보·운영·호환성·비용 비기능 8항목을 숫자로 채우기, Must 60% 규칙, 요구사항↔화면↔API↔데이터↔테스트 추적표로 구현 누락과 유령 기능 잡기, LLM 기능은 정확도 대신 품질 기준·폴백·호출 상한으로 쓰기, AI에게 초안을 맡길 때 추정한 내용을 본문에 섞지 않게 하는 프롬프트, [요구사항 명세서 템플릿](프로그램방법론/요구사항명세서템플릿.md) — 프로젝트마다 복사해서 채우는 빈 양식 |
 | 2026-09-21 | [LangGraph 장애 허용](CS지식/LangGraph_장애허용.md) — `RetryPolicy`로 노드 단위 자동 재시도(재시도 대상 예외만, 정상 반환된 실패는 재시도 안 됨), super-step 단위로 쌓이는 checkpoint, `invoke(None, config)`로 실패한 노드부터만 재개하기, 병렬 실행 중 일부만 실패해도 성공한 분기는 보존되는 구조, `TimeoutPolicy`·`error_handler`·`set_node_defaults()`, 멱등성 키로 checkpoint 재개 시 외부 부수효과 중복 방지, [LangGraph Agent Tool 실행 검증과 통제](CS지식/LangGraph_ToolControl.md) — `wrap_tool_call`/`wrap_model_call` Middleware 구조, LLM이 만드는 Tool 인자와 프로그램이 주입하는 실행 Context 분리(모델이 인자에 `approved: True`를 넣어도 무시됨), 인자·권한·승인 실행 전 검증과 반환값 실행 후 검증, `ToolCallLimitMiddleware`로 호출 횟수 제한, [LangGraph 로깅](CS지식/LangGraph_로깅.md) — `print()` 대신 `logging`을 쓰는 이유, 로거·핸들러·포매터 구조, 로거 레벨과 핸들러 레벨의 2단계 필터링(화면은 INFO만, 파일은 DEBUG까지), `RotatingFileHandler`로 로그 파일 크기 관리, `logger.exception()`으로 traceback까지 남기되 `raise`는 별도로 해야 한다는 점 |
 | 2026-09-22 | [langgraph_mini — 계좌 이체 서비스 설계/구현](langgraph_mini/README.md) — 손으로 그린 설계에서 God Object(인터페이스는 분리해도 구현체가 하나면 응집도는 그대로)와 Use/Implements 화살표 혼동을 지적, Java `interface`를 Python `typing.Protocol`(구조적 타이핑, 상속 불필요)로 옮기며 `Impl` 접미사 관행 대신 역할 이름 사용, Domain(불변식)/Repository(순수 저장)/Service(흐름 지휘) 계층 책임 분리, f-string 누락·`self` 중복 전달·출금입금 반전 등 실제 버그를 TDD로 잡은 과정, `account_id`/`owner_id` 필드 분리의 설계 의도 분석(권한 검증·소유자 기준 조회 전제), 요구사항 전체 반영해 Transaction을 계좌별 TRANSFER_OUT/IN 두 줄로 재설계하고 조건부 이체를 계산-확인 2단계(calculate/confirm)로 분리 |
+| 2026-09-28 | [RAG 앱 배포 중지](AWS배포환경/rag앱배포기록.md) — 최근 익힌 LangGraph 패턴(Supervisor·Handoff·Agentic RAG·HITL 등)을 쇼케이스할 새 채용 매칭 에이전트를 기획하며, 그 자리를 마련하려고 rag 앱을 완전 철거. 컨테이너·볼륨(`rag_index`)·서버 디렉토리·Caddy 라우팅·ECR 리포지토리·`github-actions-deploy`의 OIDC 신뢰 정책 `rag-web` 항목까지 정리하고, `monitor.sh`에서도 해당 URL 체크를 빼서 죽은 서비스에 계속 알림이 울리지 않게 함. 새 앱은 직접 파이썬으로 구현하기로 하고, MVP 범위(Supervisor+Handoff 멀티에이전트·Postgres Checkpointer·Redis 캐싱)까지 논의 |
 
 ## 목차
 
@@ -113,7 +118,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [구축 기록](AWS배포환경/구축기록.md) — 서버 선택 의사결정(네이버 1GB 한계 → 오라클 가입 실패 → 프리티어 제도 변경 확인 → EC2 확정)과 트러블슈팅 2건(OIDC `sub` 클레임의 ID 형식, `deploy-app`의 compose 변수 범위)
 - 단계별 절차 — [0. 계정과 가드레일](AWS배포환경/00_계정설정.md) · [1. 네트워크와 인스턴스](AWS배포환경/01_인스턴스생성.md) · [2. 서버 초기 세팅](AWS배포환경/02_서버세팅.md) · [3. 배포 파이프라인](AWS배포환경/03_배포파이프라인.md) · [4. 도메인과 HTTPS](AWS배포환경/04_도메인과HTTPS.md)
 - [새 앱을 올릴 때 해야 할 일](AWS배포환경/새앱배포절차.md) — 환경이 갖춰진 뒤 프로젝트 하나를 올릴 때마다 밟는 7단계(ECR·IAM 신뢰 정책·저장소·서버 compose·DNS·Caddy·push)와 체크리스트. 포트를 세 군데서 맞춰야 한다는 점, arm64 빌드, RAM 2GB에서 앱 2~3개가 한계라는 실질 제약, 증상별 확인 지점까지 정리
-- [RAG 앱 배포 기록](AWS배포환경/rag앱배포기록.md) — 이 환경에 앱을 처음 올린 기록. 평가 스크립트를 서비스로 옮기며 정한 것(인덱스 백그라운드 구축·볼륨 재사용·질의 직렬화·요청 제한), 작은 앱으로만 검증한 파이프라인이 1.5GB 이미지에서 처음 깨진 지점, 메모리 실측치
+- [RAG 앱 배포 기록](AWS배포환경/rag앱배포기록.md) — 이 환경에 앱을 처음 올린 기록. 평가 스크립트를 서비스로 옮기며 정한 것(인덱스 백그라운드 구축·볼륨 재사용·질의 직렬화·요청 제한), 작은 앱으로만 검증한 파이프라인이 1.5GB 이미지에서 처음 깨진 지점, 메모리 실측치. **2026-09-28 배포 중지** — 새 채용 매칭 에이전트에 자리를 내주려고 컨테이너·볼륨·ECR·IAM 신뢰 정책·Caddy 라우팅·모니터링 체크까지 완전 철거
 - [공용 DB 서버 구성 — PostgreSQL + Redis](AWS배포환경/DB환경구성.md) — 앱마다 DB 컨테이너를 새로 띄우지 않고 하나를 공유하는 구조 설계와 실제 적용 기록. 원티드 채용공고 API 집계로 DB 선택 근거를 데이터로 남기고, RAM 2GB 예산에 DB 상주 비용을 반영, AWS CLI+SSM으로 직접 서버에 적용하며 겪은 트러블슈팅 포함. 이어서 S3 오프사이트 백업을 최소 권한(PutObject만)으로 추가하고, 테스트 DB 생성→백업→삭제→presigned URL 복구까지 실제로 검증
 - [모니터링 / 알림](AWS배포환경/모니터링구성.md) — RAM 제약상 상주 모니터링 컨테이너 대신 cron 5분 간격 스크립트 + SNS 이메일 알림으로 구성. 외부 서비스로는 볼 수 없는(외부 미노출) DB 상태까지 서버 내부에서 확인, 상태 전이 시에만 알려 스팸 방지, 컨테이너를 실제로 중지·재시작해 알림 파이프라인 검증
 - [재사용 템플릿](AWS배포환경/templates/) — 서버 초기 세팅 스크립트, Caddy·앱 compose, Actions 워크플로, IAM 정책 3종 (검증용 테스트 앱 저장소: [jjh7757/deploy-test](https://github.com/jjh7757/deploy-test))
