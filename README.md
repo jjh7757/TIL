@@ -119,8 +119,9 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - 단계별 절차 — [0. 계정과 가드레일](AWS배포환경/00_계정설정.md) · [1. 네트워크와 인스턴스](AWS배포환경/01_인스턴스생성.md) · [2. 서버 초기 세팅](AWS배포환경/02_서버세팅.md) · [3. 배포 파이프라인](AWS배포환경/03_배포파이프라인.md) · [4. 도메인과 HTTPS](AWS배포환경/04_도메인과HTTPS.md)
 - [새 앱을 올릴 때 해야 할 일](AWS배포환경/새앱배포절차.md) — 환경이 갖춰진 뒤 프로젝트 하나를 올릴 때마다 밟는 7단계(ECR·IAM 신뢰 정책·저장소·서버 compose·DNS·Caddy·push)와 체크리스트. 포트를 세 군데서 맞춰야 한다는 점, arm64 빌드, RAM 2GB에서 앱 2~3개가 한계라는 실질 제약, 증상별 확인 지점까지 정리
 - [RAG 앱 배포 기록](AWS배포환경/rag앱배포기록.md) — 이 환경에 앱을 처음 올린 기록. 평가 스크립트를 서비스로 옮기며 정한 것(인덱스 백그라운드 구축·볼륨 재사용·질의 직렬화·요청 제한), 작은 앱으로만 검증한 파이프라인이 1.5GB 이미지에서 처음 깨진 지점, 메모리 실측치. **2026-09-28 배포 중지** — 새 채용 매칭 에이전트에 자리를 내주려고 컨테이너·볼륨·ECR·IAM 신뢰 정책·Caddy 라우팅·모니터링 체크까지 완전 철거
+- [virtual-financial-services 배포 기록](AWS배포환경/virtual-financial-services배포기록.md) — 공용 Postgres/Redis에 database/index를 실제로 처음 붙여본 앱([langgraph_mini](https://github.com/jjh7757/langgraph_mini) 은행 업무 에이전트). `deploy.yml` 템플릿의 브랜치 미수정, Terraform 바이너리 부재로 AWS CLI 직접 사용, `GOOGLE_API_KEY` 없을 때 컨테이너 크래시, `wget` 없는 베이스 이미지의 헬스체크 실패, 공유 Redis 비밀번호의 URL 인코딩 누락(가장 오래 걸린 문제)까지 정리. 배포 후 `monitor.sh`에 새 앱 체크 추가를 빼먹었다가 뒤늦게 발견해 추가하고 장애 시뮬레이션까지 재검증
 - [공용 DB 서버 구성 — PostgreSQL + Redis](AWS배포환경/DB환경구성.md) — 앱마다 DB 컨테이너를 새로 띄우지 않고 하나를 공유하는 구조 설계와 실제 적용 기록. 원티드 채용공고 API 집계로 DB 선택 근거를 데이터로 남기고, RAM 2GB 예산에 DB 상주 비용을 반영, AWS CLI+SSM으로 직접 서버에 적용하며 겪은 트러블슈팅 포함. 이어서 S3 오프사이트 백업을 최소 권한(PutObject만)으로 추가하고, 테스트 DB 생성→백업→삭제→presigned URL 복구까지 실제로 검증
-- [모니터링 / 알림](AWS배포환경/모니터링구성.md) — RAM 제약상 상주 모니터링 컨테이너 대신 cron 5분 간격 스크립트 + SNS 이메일 알림으로 구성. 외부 서비스로는 볼 수 없는(외부 미노출) DB 상태까지 서버 내부에서 확인, 상태 전이 시에만 알려 스팸 방지, 컨테이너를 실제로 중지·재시작해 알림 파이프라인 검증
+- [모니터링 / 알림](AWS배포환경/모니터링구성.md) — RAM 제약상 상주 모니터링 컨테이너 대신 cron 5분 간격 스크립트 + SNS 이메일 알림으로 구성. 외부 서비스로는 볼 수 없는(외부 미노출) DB 상태까지 서버 내부에서 확인, 상태 전이 시에만 알려 스팸 방지, 컨테이너를 실제로 중지·재시작해 알림 파이프라인 검증(redis, virtual-financial-services 둘 다)
 - [재사용 템플릿](AWS배포환경/templates/) — 서버 초기 세팅 스크립트, Caddy·앱 compose, Actions 워크플로, IAM 정책 3종 (검증용 테스트 앱 저장소: [jjh7757/deploy-test](https://github.com/jjh7757/deploy-test))
 
 ### 다크패턴스캐너 (보류)
@@ -141,7 +142,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - **07_GitHub** — [GitHub README 초안](KIS-Agent-Notes/07_GitHub/01_readme_draft.md), [2분 발표자료 초안](KIS-Agent-Notes/07_GitHub/02_presentation.md)
 
 ### langgraph_mini
-- [langgraph_mini — 계좌 이체 서비스 설계/구현](langgraph_mini/README.md) — 손으로 그린 설계 리뷰(God Object, Use/Implements 구분)부터 Java `interface`를 Python `Protocol`로 옮기는 법, Domain/Repository/Service 계층 분리, TDD로 잡은 실제 버그 목록, `account_id`/`owner_id` 필드 설계 의도 분석, 요구사항 반영한 Transaction/Card 재설계까지 정리 (코드: [jjh7757/langgraph_mini](https://github.com/jjh7757/langgraph_mini))
+- [langgraph_mini — LangGraph 은행 업무 에이전트](langgraph_mini/README.md) — 손으로 그린 설계 리뷰(God Object, Use/Implements 구분)부터 Java `interface`를 Python `Protocol`로 옮기는 법, Domain/Repository/Service 계층 분리, TDD로 잡은 실제 버그 목록까지 시작. Account에 이어 Card/Billing/Orchestration(승인·복구)/Agent(LangGraph interrupt 기반 자연어 승인)까지 전부 구현하고 실제 Gemini로 검증(진행 경과는 [langgraph_mini/설계초안/진행상황.md](https://github.com/jjh7757/langgraph_mini/blob/main/설계초안/진행상황.md), 배운 점은 [회고.md](https://github.com/jjh7757/langgraph_mini/blob/main/설계초안/회고.md)). JSON 파일 저장소를 Postgres/Redis로 전환하고 FastAPI로 감싸 이 AWS 환경에 [virtual-financial-services](AWS배포환경/virtual-financial-services배포기록.md)로 실제 배포(코드: [jjh7757/langgraph_mini](https://github.com/jjh7757/langgraph_mini))
 
 ### CS지식
 - [AI 리터러시 & LLM 애플리케이션 입문](CS지식/LLM_APP입문.md)
