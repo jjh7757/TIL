@@ -107,6 +107,26 @@ LLM 에이전트 자체(tool 22개 bind 시 응답이 비는 문제, 시스템 �
 [langgraph_mini의 진행상황.md](https://github.com/jjh7757/langgraph_mini/blob/main/설계초안/진행상황.md)에
 남겨뒀다.
 
+## `monitor.sh`에 새 앱 체크를 처음엔 빼먹었다
+
+배포·DNS·헬스체크까지 다 확인해놓고 정작 `/srv/monitor.sh`(5분마다 도는 헬스 체크
+스크립트)에 이 앱을 추가하는 걸 잊었다 — `rag` 철거 때는 체크를 **빼는** 것까지
+했으면서, 새로 추가할 때 체크를 **넣는** 걸 대칭으로 챙기지 못한 것.
+
+```bash
+check_url "virtual-financial-services" "https://virtual-financial-services.ai-agent-develop.cloud"
+check_container_health "virtual-financial-services"
+```
+
+두 줄을 추가하면서 또 하나 걸렸다 — 로컬에서 파일을 읽고 다시 써서 서버로 올리는
+과정에서 줄바꿈이 **CRLF로 바뀌어** 스크립트가 아예 안 돌았다(`$'\r': command not found`).
+`tr -d '\r'`로 정리하고 나서야 정상화됐다. **텍스트 파일을 로컬 편집 → 서버 업로드로
+왕복시킬 때는 줄바꿈 형식을 항상 의심할 것**(Windows 환경에서 특히).
+
+**교훈: 앱을 내릴 때 체크리스트가 있으면, 앱을 올릴 때도 대칭인 체크리스트가 있어야
+한다.** [새앱배포절차.md](새앱배포절차.md)의 체크리스트에 "monitor.sh에 앱 체크 추가"를
+넣어두는 게 나을 것 같다.
+
 ## 정리
 
 - **템플릿·절차 문서가 실전에서 대부분 통했다** — DB환경구성.md의 "새 프로젝트에 DB
