@@ -143,7 +143,72 @@ LEFT JOIN customer c ON r.customer_id = c.customer_id;
 
 ### Self JOIN
 
-JOIN의 한 종류가 아니라 **같은 테이블을 자기 자신과 조인하는 방식**이다. `INNER`, `LEFT` 등 어느 유형과도 함께 쓸 수 있고, 같은 테이블이 두 번 나오므로 별칭이 필수다. (예: 직원 테이블에서 직원과 그 상사 연결)
+JOIN의 한 종류가 아니라 **같은 테이블을 자기 자신과 조인하는 방식**이다. `INNER`, `LEFT` 등 어느 유형과도 함께 쓸 수 있다.
+
+- 조직도·댓글처럼 **계층 구조**를 표현할 때
+- 같은 테이블 안에서 **행끼리 비교**해야 할 때
+- 순위나 그룹 내 비교가 필요할 때
+
+같은 테이블이 두 번 나오므로 **별칭으로 구분하는 것이 필수**다.
+
+**같은 영화에 출연한 배우 쌍 (`dvdrental`)**
+
+```sql
+SELECT a.actor_id AS actor_1,
+       b.actor_id AS actor_2,
+       a.film_id
+FROM film_actor a
+JOIN film_actor b ON a.film_id = b.film_id
+WHERE a.actor_id < b.actor_id;
+```
+
+- `a`와 `b`는 같은 `film_actor` 테이블을 구분하기 위한 별칭이다.
+- `a.actor_id < b.actor_id`는 자기 자신과의 조합과, 순서만 바뀐 중복 조합을 제외한다. `(1, 2)`는 남기고 `(1, 1)`과 `(2, 1)`은 제외한다.
+
+**댓글 - 대댓글 관계**
+
+`parent_id`가 같은 테이블의 `id`를 가리키는 구조다. 원댓글은 `parent_id`가 NULL이다.
+
+```sql
+CREATE TABLE comments (
+    id INT PRIMARY KEY,
+    content TEXT,
+    parent_id INT,
+    FOREIGN KEY (parent_id) REFERENCES comments(id)
+);
+
+INSERT INTO comments VALUES
+(1, '안녕하세요', NULL),           -- 원댓글
+(2, '반갑습니다', NULL),           -- 원댓글
+(3, '네 안녕하세요!', 1),          -- 1번 댓글의 대댓글
+(4, '저도 반가워요', 1),           -- 1번 댓글의 대댓글
+(5, '답글 드립니다', 2),           -- 2번 댓글의 대댓글
+(6, '안녕', NULL);                -- 원댓글
+```
+
+```sql
+-- 모든 댓글
+SELECT c.id AS comment_id, c.content AS comment_content
+FROM comments c;
+
+-- 원댓글만
+SELECT parent.id AS parent_id, parent.content AS parent_content
+FROM comments parent
+WHERE parent.parent_id IS NULL;
+
+-- 원댓글과 대댓글을 함께
+SELECT parent.id AS parent_id,
+       parent.content AS parent_content,
+       child.id AS reply_id,
+       child.content AS reply_content
+FROM comments parent
+LEFT JOIN comments child ON child.parent_id = parent.id
+WHERE parent.parent_id IS NULL;   -- 원댓글만 기준으로
+```
+
+- 원댓글과 **바로 아래 대댓글까지만** 조회한다. 대댓글에 달린 답글은 포함하지 않는다.
+- `LEFT JOIN`이라 대댓글이 없는 원댓글도 나온다. 예제의 6번은 `reply_id`, `reply_content`가 NULL이다.
+- 여기서 `WHERE parent.parent_id IS NULL`은 **왼쪽(parent) 테이블 조건**이라 LEFT JOIN의 "왼쪽 유지"를 깨지 않는다. (오른쪽 조건을 `WHERE`에 쓰면 안 되는 경우와 구분할 것)
 
 ## ON과 WHERE의 차이
 

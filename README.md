@@ -76,6 +76,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-03 | [소량 데이터 이미지 회귀: 실험을 운영하는 법](CS지식/소량데이터_이미지회귀_실험운영.md) — 사전학습 특징 + 선형 회귀(linear probe)와 층 전체 스윕, 라벨 불변 증강과 일괄 배율 vs 무작위 배율, "다르게 틀리는" 성분 앙상블, 미세조정 head 초기화(표준화 + Ridge 해), 사전 채택 기준·다중비교 기준선·구간별 오차 분석, Windows 장시간 작업 운영까지 |
 | 2026-10-05 | [소량 데이터 GPU 미세조정: 입력 조건, 재확인, 결과 파일 관리](CS지식/GPU미세조정_실험운영.md) — 정답이 전역 통계일 때 크롭 증강이 라벨 잡음이 되는 이유, 시드 하나의 개선을 다른 시드로 재확인하기, 같은 모델의 입력 해상도를 바꿔 얻는 앙상블 다양성, 앙상블 비중 학습의 과적합과 중첩 교차검증, 폴드 모델 평균 + 전체 데이터 재학습, 설정을 전부 담는 결과 파일 이름 규칙, 클라우드 노트북에서 학습을 커널과 분리해 장시간 버티기 |
 | 2026-10-06 | [SQL JOIN](CS지식/SQL_JOIN.md) — `INNER`/`LEFT`/`RIGHT`/`FULL JOIN` 비교, `LEFT JOIN`으로 짝 없는 행 찾기(`IS NULL`)와 `INNER JOIN`에서 사라지는 행, 1:N 조인에서 행이 반복되는 이유, M:N을 연관 테이블 두 번 조인으로 풀기, `LEFT JOIN`에서 오른쪽 테이블 조건을 `ON`에 쓸 때와 `WHERE`에 쓸 때의 차이, Self JOIN, `world`·`dvdrental` 다중 테이블 조인 + `GROUP BY`/`HAVING` 예제 |
+| 2026-10-07 | [SQL JOIN](CS지식/SQL_JOIN.md) Self JOIN 보강 — 같은 영화에 출연한 배우 쌍(`a.actor_id < b.actor_id`로 자기 자신·순서 뒤바뀐 중복 제거), `parent_id` 자기참조 댓글-대댓글 테이블을 `LEFT JOIN`으로 조회(대댓글 없는 원댓글 유지), [SQL 뷰(View)](CS지식/SQL_VIEW.md) — 쿼리만 저장하고 데이터는 저장하지 않는 객체, 보안(컬럼·행 공개 범위 제한)과 복잡한 조인 단순화 용도, `DROP VIEW`는 원본에 영향 없음, 조인·집계 뷰는 읽기 전용·인덱스 불가 |
 
 ## 목차
 
@@ -211,6 +212,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [SQL 기초: DDL과 DML](CS지식/SQL기초_DDL_DML.md) — DDL/DML/DCL/TCL 분류, 트랜잭션(`BEGIN`/`COMMIT`/`ROLLBACK`), PostgreSQL 데이터 타입과 제약조건, 외래키와 참조 무결성, `DEFAULT`·`IDENTITY`, `ALTER`/`DROP`/`TRUNCATE`, `INSERT`/`UPDATE`/`DELETE`와 `WHERE` 생략 주의
 - [SQL SELECT](CS지식/SQL_SELECT.md) — `WHERE`(NULL은 `IS NULL`, `LIKE`/`ILIKE`, `AND`>`OR` 우선순위), `ORDER BY`의 `NULLS FIRST/LAST`, `LIMIT`/`OFFSET` 페이징, `GROUP BY`·집계 함수의 NULL 처리, `WHERE` vs `HAVING`, SELECT 논리적 처리 순서(별칭을 `HAVING`에서 못 쓰는 이유)
 - [SQL JOIN](CS지식/SQL_JOIN.md) — `INNER`/`LEFT`/`RIGHT`/`FULL JOIN`, `LEFT JOIN`+`IS NULL`로 짝 없는 행 찾기, 1:N 조인의 행 반복과 M:N 연관 테이블 조인, `ON` vs `WHERE`(LEFT JOIN에서 오른쪽 조건 위치에 따른 결과 차이), Self JOIN, 다중 테이블 조인 + `GROUP BY`/`HAVING` 예제
+- [SQL 뷰(View)](CS지식/SQL_VIEW.md) — 저장된 SELECT를 테이블처럼 조회, 보안(공개 범위 제한)과 반복 조인 단순화, `CREATE VIEW`/`DROP VIEW`, 조인·집계 뷰의 읽기 전용 제한, 뷰와 테이블 조인 예제
 - [교차검증과 데이터 누수](CS지식/교차검증과데이터누수.md) — 검증 틀(저장된 폴드·OOF·기준선)을 모델보다 먼저 만드는 이유, 회귀 타깃 분위수 층화(`qcut`)와 극단값 별도 층 배분, 전처리·하이퍼파라미터 선택은 폴드 train에서만 fit하는 누수 방지 규칙, Public 리더보드 점수를 읽는 법, 극단 샘플 인상은 전체 상관으로 검증, 한글 경로·DLL 차단·변수 덮어쓰기 등 삽질 기록
 - [소량 데이터 이미지 회귀: 실험을 운영하는 법](CS지식/소량데이터_이미지회귀_실험운영.md) — 고정 특징 + 선형 회귀와 층 전체 스윕, 라벨 불변 증강, "다르게 틀리는" 성분 앙상블, 미세조정 head의 Ridge 초기화, 사전 채택 기준·다중비교 기준선·구간별 오차 분석
 - [소량 데이터 GPU 미세조정: 입력 조건, 재확인, 결과 파일 관리](CS지식/GPU미세조정_실험운영.md) — 크롭 증강과 정답 정의, 단일 시드 재확인, 해상도 다양성, 비중 학습의 과적합, 전체 데이터 재학습, 결과 파일 관리, 장시간 학습을 커널과 분리
