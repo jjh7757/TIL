@@ -138,8 +138,53 @@ SQL이 오류 없이 실행돼도 **집계가 질문 의도에 맞는지는 별�
 
 어느 한 겹이 뚫려도 다음 겹에서 막히도록 **서로 다른 층**에 방어를 둔다. 프롬프트로 "변경하지 마"라고 시키는 것은 방어선이 아니라 희망 사항이다.
 
-## 숙제: dvdrental 조회 에이전트 (과제 요구사항)
+## 숙제: dvdrental 조회 에이전트와 정답 구조
 
-- SELECT만 허용, 영화 관련 테이블은 조회 가능, **`customer` 등 고객 관련 테이블은 접근 불가**.
-- 심화: 현재 사용자(`customer_id = 1`)의 `rental`만 조회 가능, 다른 고객 조회는 차단.
-- 접근 제한은 프롬프트가 아니라 **계정 `GRANT` 범위와 `include_tables`, SQL 검사(허용 테이블 목록)**로 구현해야 확실하다. 다른 고객의 `customer_id`는 LLM이 만드는 SQL의 `WHERE` 값으로 들어오므로, "내 `customer_id`"는 사용자 입력이 아니라 **서버가 고정해서 주입**해야 한다.
+**요구사항**: SELECT만 허용, 영화 관련 테이블은 조회 가능, `customer` 등 고객 관련 테이블은 접근 불가. 심화로 현재 사용자(`customer_id = 1`)의 `rental`만 조회 가능하고 다른 고객 조회는 차단.
+
+접근 제한을 프롬프트가 아니라 **DB 계정 권한 · 대상 테이블 · 도구 설계**로 구현한 것이 정답 코드의 핵심이다.
+
+**1) 용도별로 계정을 둘로 나눈다** — 같은 DB라도 목적마다 권한 범위가 다르다.
+
+```sql
+-- 영화 정보용: 영화 관련 테이블만
+CREATE ROLE movie_reader LOGIN PASSWORD '...';
+GRANT SELECT ON film, actor, film_actor, category, film_category, language TO movie_reader;
+
+-- 내 대여 내역용: rental 계열만
+CREATE ROLE rental_reader LOGIN PASSWORD '...';
+GRANT SELECT ON rental, inventory, film TO rental_reader;
+```
+
+`customer` 테이블은 어느 계정에도 `GRANT`하지 않는다. 모델이 `SELECT * FROM customer`를 만들어도 DB가 권한 오류로 거절하므로, 프롬프트에 "개인정보는 안 돼"라고 쓰는 것과 달리 **모델이 무슨 SQL을 만들든 막힌다.** `SQLDatabase(include_tables=MOVIE_TABLES)`로 스키마를 LLM에게 보여 주는 범위도 영화 테이블로 제한한다.
+
+**2) `.env`도 계정별로 분리**한다(`MOVIE_POSTGRES_USER/PASSWORD`, `RENTAL_POSTGRES_USER/PASSWORD`). 접속 URI를 만드는 `make_db_uri("MOVIE")`/`("RENTAL")` 함수 하나로 두 계정을 처리한다.
+
+**3) 본인 대여 내역은 Text-to-SQL이 아니라 고정 SQL 도구로** 처리한다.
+
+```python
+@tool
+def get_my_rentals(runtime: ToolRuntime[UserContext]) -> str:
+    """현재 로그인한 사용자의 최근 대여 내역을 최대 20건 조회한다."""
+    # 고객 번호는 모델의 도구 인자가 아닌 서버의 context에서 가져온다.
+    rows = fetch_rows(rental_uri, "... WHERE r.customer_id = %s ...", (runtime.context.customer_id,))
+```
+
+- `customer_id`를 도구 **인자**로 받으면 모델이 `2`를 넣을 수 있다. 대신 `ToolRuntime`의 **context**(`UserContext.customer_id`)에서 꺼낸다. 이 값은 에이전트를 호출하는 서버 코드가 정한다: `agent.invoke(..., context=UserContext(customer_id=1))`.
+- `create_agent(..., context_schema=UserContext)`로 context 타입을 등록한다. 이전에 본 `config["configurable"]["user_id"]`와 같은 목적(요청 단위 사용자 정보 주입)을, 도구 안에서 **타입이 있는 객체**로 받는 방식이다.
+- 이 설계에서는 "고객 2번의 대여 내역"을 요청해도 도구에 그 번호를 전달할 경로 자체가 없다. [LangGraph 메모리와 상태](LangGraph_메모리와상태.md)에서 본 "클라이언트가 보낸 `user_id`를 그대로 신뢰하지 말라"는 원칙의 구현이다.
+
+**4) 프롬프트는 거절 안내만 맡는다.** "다른 고객 대여 내역은 조회할 수 없다고 안내", "반납일이 null이면 미반납", "개인정보 조회·데이터 변경은 지원하지 않는다고 안내". 이는 사용자 경험(친절한 거절 메시지)을 위한 것이고, 안전은 위 1~3번이 보장한다.
+
+**테스트 질문 5개**(정답 스크립트 하단): 영화 검색 / 카테고리별 영화 수 / `고객 1번의 이름과 이메일`(→ 차단) / `내 최근 대여 내역`(→ `get_my_rentals`) / `고객 2번의 대여 내역`(→ 거절).
+
+## 실습: 자연어 문의 접수 서비스 (설계 과제)
+
+별도 실습 노트북(`32-postgres-agent-practice`)의 과제. 데이터 요구사항은 **유저 · 구매 내역 · 문의** 3개 테이블(상품 정보는 구매 내역에 함께 저장)이고, 문의는 관련 구매가 있으면 그 구매와 연결한다.
+
+- 사용자 ID는 주어진 것으로 보고 로그인은 구현하지 않는다.
+- 자연어 문의를 읽어 **유형을 분류**하고, 구매 관련이면 해당 사용자의 구매 내역을 조회해 보여 준다.
+- 관련 구매가 **여러 건이거나 없으면 추가 정보를 요청**한다(예: "키보드 구매가 두 건입니다. 어느 구매인가요?" → "지난주 거요").
+- 구매 관련 문의는 구매 내역과 연결해 저장하고, 일반 문의는 연결 없이 저장한다.
+
+문의 테이블의 구매 연결 컬럼(`purchase_id`)은 **NULL을 허용하는 외래키**가 되어야 일반 문의와 구매 문의를 한 테이블에 담을 수 있다. 위의 "본인 것만 조회" 원칙이 여기서도 적용된다 — 구매 조회 시 `user_id`는 모델이 만든 값이 아니라 서버가 정한 값으로 고정해야 한다.
