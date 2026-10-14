@@ -80,6 +80,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-12 | [LangGraph PostgreSQL 저장소](CS지식/LangGraph_PostgreSQL저장소.md) — `PostgresSaver`/`PostgresStore`로 대화·프로필 영속화, 자동 생성 테이블(`checkpoints`·`store` 등)과 `store.prefix` 매핑, `store.get`과 `dict.get` 차이, `checkpoints`에 FK 걸기(임의 문자열 `thread_id`에는 불가 → 별도 컬럼, `store`는 복합키라 컬럼 2개·`ON DELETE SET NULL`), [LangGraph PostgreSQL Agent](CS지식/LangGraph_PostgreSQL에이전트.md) — `GRANT`로 읽기 전용 계정, `read_only` 트랜잭션, 고정 SQL 도구 vs Text-to-SQL, SQLGlot으로 SELECT 1개만 허용(`WITH` 속 DELETE·`SELECT INTO` 차단), 최대 3회 재시도 |
 | 2026-10-13 | [프론트엔드와 HTML](CS지식/프론트엔드_HTML.md) — HTML(내용·구조)/CSS(스타일)/JavaScript(동작) 역할 분담과 브라우저가 화면을 그리는 과정, 요소=태그+속성+내용, 문서 구조(`DOCTYPE`·`head`·`body`), 시맨틱 태그, 절대/상대 주소 해석, `form`의 `name`·`method="get"`이 만드는 쿼리 스트링, `id`(고유) vs `class`(공통), 부모·자식·형제·자손 관계, 개발자 도구, [CSS 기초](CS지식/프론트엔드_CSS.md) — 선택자와 속성·값 구조, 박스 모델(`padding`·`border`·`margin`), 태그·클래스·아이디·속성 선택자, `.a.b`(둘 다 가진 요소), 자손(공백) vs 자식(`>`) 선택자, 인라인·내부·외부 스타일 |
 | 2026-10-13 | [웹 크롤링 — BeautifulSoup과 Playwright](CS지식/웹크롤링_BeautifulSoup과Playwright.md) — `requests`+`BeautifulSoup`(CSS 선택자, `select` vs `select_one`, `urljoin`으로 상대→절대 주소, CSV `utf-8-sig`·JSON 저장), 응답 HTML과 브라우저 화면의 차이, Playwright `Locator`와 `wait_for`(요소가 나타날 때까지 기다린 뒤 읽기), [크롤링 + Parent-Child RAG](CS지식/크롤링_ParentChildRAG.md) — 위키백과 크롤링 원문은 PostgreSQL, Child 벡터는 Chroma에 나눠 저장, section=Parent·청크=Child, `ON CONFLICT DO UPDATE`(upsert)와 `RETURNING`, 검색 순서를 유지한 Parent 중복 제거 조회, 임베딩 중복 방지, [LangGraph PostgreSQL Agent](CS지식/LangGraph_PostgreSQL에이전트.md) 보강 — dvdrental 정답 구조(용도별 계정 분리, `ToolRuntime` context로 `customer_id`를 서버가 주입) |
+| 2026-10-14 | [강의 기반 자기소개서 작성 가이드](프로그램방법론/강의기반자기소개서작성가이드.md) — 자기소개서 특강에서 강조된 판단 기준 정리: 채용공고 용어와 경험 근거 연결, 두괄식, 지원동기·입사 후 포부·직무 전문성·협업 문항별 작성법, 결론을 앞에 둔 경험 서술 구조, AI와 함께 쓸 때의 원칙, 피해야 할 표현, 최종 검토 체크리스트 |
 
 ## 목차
 
@@ -114,6 +115,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [프로젝트 도구](프로그램방법론/프로젝트도구.md) — Obsidian, Notion, Jira, GitHub 역할 구분
 - [미니프로젝트 아이디어 초안](프로그램방법론/미니프로젝트아이디어초안.md) — 금융투자봇을 리스크 경고·알림·리포트 기능으로 확장한 최종 아이디어
 - [나만의 채용 공고](프로그램방법론/나만의채용공고.md) — AI Agent 엔지니어 실제 채용 공고 5개를 기술스택·자격요건·우대사항 기준으로 뽑아 현재 충족/단기 충족 가능/장기간 필요 3단계로 분류
+- [강의 기반 자기소개서 작성 가이드](프로그램방법론/강의기반자기소개서작성가이드.md) — 공고 적합성, 두괄식, 문항별 작성법, 경험 서술 구조, AI 활용 원칙, 피해야 할 표현, 최종 체크리스트
 
 ### Vercel 실습
 - [맛집 추천 서비스 기준선](vercel실습/맛집추천서비스/맛집추천서비스기준선.md) — 예산 기반 맛집 추천 미니프로젝트 기준선 v0.1
