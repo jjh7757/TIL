@@ -7,6 +7,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 여기서 배운 것을 실제로 올려 운영 중인 서비스입니다.
 
 - [왜샀어(WhyBuy)](https://whybuy.ai-agent-develop.cloud) — 근거를 남겨야 완료되는 모의투자 서비스 ([코드](https://github.com/jjh7757/whybuy) · [구현 정리](vercel실습/왜샀어/왜샀어구현.md))
+- [KIC 공시 리스크 모니터링 에이전트](https://kic.ai-agent-develop.cloud) — KIC 13F 보유 650개 기업의 SEC 공시를 매일 수집해, 원문 인용과 KIC 규정 기준 등급으로 위험을 경보하는 LangGraph 에이전트 (「국부펀드 KIC, AI 에이전트 공모전」 출품작, 코드 비공개)
 - [RAG 에이전트 챗봇](https://chatbot.ai-agent-develop.cloud) — Supervisor가 분야별 서브 에이전트에게 위임하는 PDF 문서 질의응답 ([코드](https://github.com/jjh7757/rag-agent-practice) · [배포 기록](AWS배포환경/rag에이전트챗봇배포기록.md))
 
 [직접 구축한 배포 환경](AWS배포환경/README.md) 위에서 `git push` 한 번으로 갱신됩니다.
