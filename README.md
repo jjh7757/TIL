@@ -85,6 +85,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-14 | [강의 기반 자기소개서 작성 가이드](프로그램방법론/강의기반자기소개서작성가이드.md) — 자기소개서 특강에서 강조된 판단 기준 정리: 채용공고 용어와 경험 근거 연결, 두괄식, 지원동기·입사 후 포부·직무 전문성·협업 문항별 작성법, 결론을 앞에 둔 경험 서술 구조, AI와 함께 쓸 때의 원칙, 피해야 할 표현, 최종 검토 체크리스트, [RAG PDF 표·이미지 추출](CS지식/RAG_PDF표이미지추출.md) — PyPDFLoader 텍스트 추출이 표의 행·열 관계를 잃는 문제, PDF가 글자·선·이미지를 좌표로 저장하는 방식, `pdfplumber`의 선·교차점 기반 표 인식과 `bbox`, 빠진 경계 보완(`explicit_vertical_lines`)·병합 셀 값 채우기·Markdown 변환, 면적 비율로 이미지를 골라 Gemini로 "요약 금지·[확인 불가] 표시" 추출, 표·이미지 영역의 기존 글자를 제외하고 위치 순서대로 블록 구성, 일반 청킹에서 표가 깨지는 현상과 헤더·각주를 반복하는 행 단위 분할(`split_table_rows`), [RAG Golden Set 작성 가이드](CS지식/RAG_골든셋.md) — 질문·기준 답변·근거 구절·근거 위치·답변 가능 여부 항목 설계, 기준 답변은 문장이 아니라 포함할 내용이라는 점, 문서+근거 위치 vs 청크 ID 정답, LLM 초안은 원문 대조 검수 후 사용, 답변 불가 문항(근거 비움·Recall@k 평균 제외), 개발셋/테스트셋 분리와 버전 관리, 평가 데이터를 검색 대상에 섞지 않기 |
 | 2026-10-16 | [RAG 에이전트 챗봇 배포 기록](AWS배포환경/rag에이전트챗봇배포기록.md) — 실습으로 만든 Supervisor + 분야별 서브 에이전트 RAG 챗봇(Streamlit)을 [새 앱 배포 절차](AWS배포환경/새앱배포절차.md)대로 `chatbot.ai-agent-develop.cloud`에 배포. 실습 폴더에서 런타임에 필요한 것(코드·벡터 DB·그림·BM25 캐시, 365MB)만 골라 새 저장소로 옮기고 인덱스는 서버에서 다시 만들지 않고 이미지에 포함, 100MB 초과 파일이 없는지 push 전에 확인. 이전 배포에서 `wget` 없는 이미지로 헬스체크가 실패했던 경험을 반영해 파이썬으로 헬스체크. IAM 신뢰 정책은 한 줄 추가 API가 없어 문서 전체를 받아 덧붙여 올린 뒤 기존 항목이 남았는지 재확인, DNS 전파 확인 후 `caddy validate`→reload 순서로 인증서 발급 실패 없이 첫 push에 HTTPS 200 |
 | 2026-10-19 | [MCP 기초](CS지식/MCP기초.md) — `@tool`(앱 안의 도구)과 MCP(앱 밖 서버로 분리해 여러 앱이 공유)의 차이, Host/Client/Server 구성, Tool·Resource·Prompt, JSON-RPC `tools/list`·`tools/call`, `FastMCP`로 날씨 서버 만들기, `langchain-mcp-adapters`로 Agent에 연결(`ainvoke`)하고 Claude Code에도 같은 서버 등록, Smithery와 A2A 구분, [로컬 LLM — Ollama와 Hugging Face](CS지식/로컬LLM_Ollama.md) — `ChatOllama`로 모델만 교체해 기존 체인 재사용, 양자화·파라미터(`0.8b`)의 의미, Hugging Face GGUF, 로컬 모델 vs Gemini API 비교 |
+| 2026-10-23 | [FastAPI 기초](CS지식/FastAPI기초.md) — 클라이언트·서버 요청/응답, `uv add "fastapi[standard]"`, `@app.get` 엔드포인트와 JSON 자동 변환, `fastapi dev` 개발 서버, Swagger UI(`/docs`) 자동 문서화, `APIRouter`로 나눈 메모리 게시판 CRUD(RESTful 경로·HTTP 메서드, 경로 매개변수)와 예제의 한계 |
 
 ## 목차
 
@@ -193,6 +194,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [LangChain Tool과 기본 Agent](CS지식/LangChain_Tool과Agent.md) — `@tool` 데코레이터, `bind_tools()`, Tool 호출 루프, TMDB 영화 조회 Agent 실전 예제
 - [MCP 기초](CS지식/MCP기초.md) — `@tool` vs MCP, Host/Client/Server, Tool·Resource·Prompt, JSON-RPC, `FastMCP` 서버, `langchain-mcp-adapters`·Claude Code 연결, Smithery·A2A
 - [로컬 LLM — Ollama와 Hugging Face](CS지식/로컬LLM_Ollama.md) — `ChatOllama`로 모델만 교체, 양자화·파라미터 크기, Hugging Face GGUF, 로컬 vs Gemini API
+- [FastAPI 기초](CS지식/FastAPI기초.md) — 엔드포인트·JSON 응답, `fastapi dev`, Swagger UI 자동 문서화, `APIRouter`, 메모리 게시판 CRUD(RESTful 경로·경로 매개변수)
 - [RAG 기초](CS지식/RAG_기초.md) — Document Loader, Text Splitter(청크 크기·overlap), 임베딩(`embed_query`/`embed_documents`), 코사인 유사도
 - [벡터 DB](CS지식/벡터DB.md) — ANN(HNSW/IVF), 메타데이터 필터링, Chroma 실습(저장·검색·Retriever), 임베딩 모델 변경 시 재구축 필요성
 - [RAG 파이프라인](CS지식/RAG_파이프라인.md) — 검색·포매팅·프롬프트·생성을 `RunnablePassthrough.assign()`/딕셔너리 병렬 구성으로 체인 하나로 엮기, Inline Citation/Source List로 출처 표시
