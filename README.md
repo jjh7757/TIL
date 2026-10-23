@@ -86,6 +86,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-16 | [RAG 에이전트 챗봇 배포 기록](AWS배포환경/rag에이전트챗봇배포기록.md) — 실습으로 만든 Supervisor + 분야별 서브 에이전트 RAG 챗봇(Streamlit)을 [새 앱 배포 절차](AWS배포환경/새앱배포절차.md)대로 `chatbot.ai-agent-develop.cloud`에 배포. 실습 폴더에서 런타임에 필요한 것(코드·벡터 DB·그림·BM25 캐시, 365MB)만 골라 새 저장소로 옮기고 인덱스는 서버에서 다시 만들지 않고 이미지에 포함, 100MB 초과 파일이 없는지 push 전에 확인. 이전 배포에서 `wget` 없는 이미지로 헬스체크가 실패했던 경험을 반영해 파이썬으로 헬스체크. IAM 신뢰 정책은 한 줄 추가 API가 없어 문서 전체를 받아 덧붙여 올린 뒤 기존 항목이 남았는지 재확인, DNS 전파 확인 후 `caddy validate`→reload 순서로 인증서 발급 실패 없이 첫 push에 HTTPS 200 |
 | 2026-10-19 | [MCP 기초](CS지식/MCP기초.md) — `@tool`(앱 안의 도구)과 MCP(앱 밖 서버로 분리해 여러 앱이 공유)의 차이, Host/Client/Server 구성, Tool·Resource·Prompt, JSON-RPC `tools/list`·`tools/call`, `FastMCP`로 날씨 서버 만들기, `langchain-mcp-adapters`로 Agent에 연결(`ainvoke`)하고 Claude Code에도 같은 서버 등록, Smithery와 A2A 구분, [로컬 LLM — Ollama와 Hugging Face](CS지식/로컬LLM_Ollama.md) — `ChatOllama`로 모델만 교체해 기존 체인 재사용, 양자화·파라미터(`0.8b`)의 의미, Hugging Face GGUF, 로컬 모델 vs Gemini API 비교 |
 | 2026-10-23 | [FastAPI 기초](CS지식/FastAPI기초.md) — 클라이언트·서버 요청/응답, `uv add "fastapi[standard]"`, `@app.get` 엔드포인트와 JSON 자동 변환, `fastapi dev` 개발 서버, Swagger UI(`/docs`) 자동 문서화, `APIRouter`로 나눈 메모리 게시판 CRUD(RESTful 경로·HTTP 메서드, 경로 매개변수)와 예제의 한계 |
+| 2026-10-24 | [FastAPI 요청과 응답](CS지식/FastAPI_요청과응답.md) — Pydantic `BaseModel` 요청 본문 검증, 요청 DTO vs 게시글 객체, 경로·쿼리·본문 자동 구분과 `/search`를 `/{id}` 앞에 두는 이유, 상태 코드(200/201/204/404/422)와 `HTTPException`, `response_model`로 목록/상세 응답 필드 제한, 빈 문자열 검증 · [FastAPI 레이어드 아키텍처](CS지식/FastAPI_레이어드아키텍처.md) — 관심사 분리, Router·Service·Repository 계층의 책임과 호출 방향, Pydantic 검증 vs Service 검증, mysite4 CRUD 구현 |
 
 ## 목차
 
@@ -195,6 +196,8 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [MCP 기초](CS지식/MCP기초.md) — `@tool` vs MCP, Host/Client/Server, Tool·Resource·Prompt, JSON-RPC, `FastMCP` 서버, `langchain-mcp-adapters`·Claude Code 연결, Smithery·A2A
 - [로컬 LLM — Ollama와 Hugging Face](CS지식/로컬LLM_Ollama.md) — `ChatOllama`로 모델만 교체, 양자화·파라미터 크기, Hugging Face GGUF, 로컬 vs Gemini API
 - [FastAPI 기초](CS지식/FastAPI기초.md) — 엔드포인트·JSON 응답, `fastapi dev`, Swagger UI 자동 문서화, `APIRouter`, 메모리 게시판 CRUD(RESTful 경로·경로 매개변수)
+- [FastAPI 요청과 응답](CS지식/FastAPI_요청과응답.md) — Pydantic 요청 본문, 경로·쿼리 파라미터, 상태 코드와 `HTTPException`, `response_model`, 빈 문자열 Validation
+- [FastAPI 레이어드 아키텍처](CS지식/FastAPI_레이어드아키텍처.md) — 관심사 분리, Router·Service·Repository 계층, Pydantic vs Service 검증, 게시판 CRUD 계층 구현
 - [RAG 기초](CS지식/RAG_기초.md) — Document Loader, Text Splitter(청크 크기·overlap), 임베딩(`embed_query`/`embed_documents`), 코사인 유사도
 - [벡터 DB](CS지식/벡터DB.md) — ANN(HNSW/IVF), 메타데이터 필터링, Chroma 실습(저장·검색·Retriever), 임베딩 모델 변경 시 재구축 필요성
 - [RAG 파이프라인](CS지식/RAG_파이프라인.md) — 검색·포매팅·프롬프트·생성을 `RunnablePassthrough.assign()`/딕셔너리 병렬 구성으로 체인 하나로 엮기, Inline Citation/Source List로 출처 표시
