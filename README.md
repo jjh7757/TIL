@@ -88,6 +88,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-23 | [FastAPI 기초](CS지식/FastAPI기초.md) — 클라이언트·서버 요청/응답, `uv add "fastapi[standard]"`, `@app.get` 엔드포인트와 JSON 자동 변환, `fastapi dev` 개발 서버, Swagger UI(`/docs`) 자동 문서화, `APIRouter`로 나눈 메모리 게시판 CRUD(RESTful 경로·HTTP 메서드, 경로 매개변수)와 예제의 한계 |
 | 2026-10-24 | [FastAPI 요청과 응답](CS지식/FastAPI_요청과응답.md) — Pydantic `BaseModel` 요청 본문 검증, 요청 DTO vs 게시글 객체, 경로·쿼리·본문 자동 구분과 `/search`를 `/{id}` 앞에 두는 이유, 상태 코드(200/201/204/404/422)와 `HTTPException`, `response_model`로 목록/상세 응답 필드 제한, 빈 문자열 검증 · [FastAPI 레이어드 아키텍처](CS지식/FastAPI_레이어드아키텍처.md) — 관심사 분리, Router·Service·Repository 계층의 책임과 호출 방향, Pydantic 검증 vs Service 검증, mysite4 CRUD 구현 |
 | 2026-10-26 | [FastAPI DB 연동](CS지식/FastAPI_DB연동.md) — 메모리 게시판을 PostgreSQL로 전환(mysite_db). Engine·연결 풀·세션·`DeclarativeBase`, `Mapped`/`mapped_column` 모델, lifespan에서 `create_all`·`engine.dispose`, `get_db()`+`Depends`로 요청마다 세션 주입(의존성 주입), Service의 `with db.begin():` 트랜잭션(자동 commit/rollback), 변경 감지(dirty checking), `from_attributes` 응답 · [SQLAlchemy ORM 기초](CS지식/SQLAlchemy_ORM.md) — `add`/`flush`/`commit`/`rollback`/`refresh`, `get`, `select`+`scalars`/`scalar`와 `.all`/`.first`/`.one`/`.one_or_none`, `where`·`like`·`or_`/`and_`·`order_by`·`limit`, 수정·삭제 |
+| 2026-10-27 | [FastAPI 다대다 관계](CS지식/FastAPI_다대다관계.md) — 게시글–태그 M:N을 연결 테이블(`PostTagMN`)로 표현, `relationship`/`back_populates`, `cascade="all, delete-orphan"`로 연결만 삭제하고 태그는 유지, `UniqueConstraint`로 중복 연결 방지, `association_proxy`+`creator`로 `post.tags.append(tag)`, `IN`으로 기존 태그 일괄 조회·없는 태그만 생성, `EXISTS` 검사 · [SQLAlchemy N+1 문제](CS지식/SQLAlchemy_N+1문제.md) — 지연 로딩이 만드는 1+N 쿼리, `joinedload`(JOIN, 컬렉션엔 `.unique()`) vs `selectinload`(IN), 관계별 선택 기준, 옵션 나열·체이닝, `join()`과 `joinedload()` 차이, 실습 API별 SQL 횟수 비교(26회→2회 등) |
 
 ## 목차
 
@@ -201,6 +202,8 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [FastAPI 레이어드 아키텍처](CS지식/FastAPI_레이어드아키텍처.md) — 관심사 분리, Router·Service·Repository 계층, Pydantic vs Service 검증, 게시판 CRUD 계층 구현
 - [FastAPI DB 연동](CS지식/FastAPI_DB연동.md) — PostgreSQL + SQLAlchemy 게시판, Engine·세션·모델, lifespan 테이블 생성, `Depends(get_db)` 의존성 주입, `with db.begin()` 트랜잭션, 변경 감지
 - [SQLAlchemy ORM 기초](CS지식/SQLAlchemy_ORM.md) — 트랜잭션 메서드, `get`/`select`/`scalars`, 결과 추출 메서드, 조건·정렬·제한 조회, 더티 체킹, 삭제
+- [FastAPI 다대다 관계](CS지식/FastAPI_다대다관계.md) — 연결 테이블, cascade·delete-orphan, `UniqueConstraint`, `association_proxy`, 태그 생성·연결·해제와 삭제 범위
+- [SQLAlchemy N+1 문제](CS지식/SQLAlchemy_N+1문제.md) — 지연 로딩 vs 즉시 로딩, `joinedload`/`selectinload` 선택 기준, 체이닝, `join()` vs `joinedload()`, SQL 횟수 실습
 - [RAG 기초](CS지식/RAG_기초.md) — Document Loader, Text Splitter(청크 크기·overlap), 임베딩(`embed_query`/`embed_documents`), 코사인 유사도
 - [벡터 DB](CS지식/벡터DB.md) — ANN(HNSW/IVF), 메타데이터 필터링, Chroma 실습(저장·검색·Retriever), 임베딩 모델 변경 시 재구축 필요성
 - [RAG 파이프라인](CS지식/RAG_파이프라인.md) — 검색·포매팅·프롬프트·생성을 `RunnablePassthrough.assign()`/딕셔너리 병렬 구성으로 체인 하나로 엮기, Inline Citation/Source List로 출처 표시
