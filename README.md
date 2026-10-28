@@ -89,6 +89,7 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 | 2026-10-24 | [FastAPI 요청과 응답](CS지식/FastAPI_요청과응답.md) — Pydantic `BaseModel` 요청 본문 검증, 요청 DTO vs 게시글 객체, 경로·쿼리·본문 자동 구분과 `/search`를 `/{id}` 앞에 두는 이유, 상태 코드(200/201/204/404/422)와 `HTTPException`, `response_model`로 목록/상세 응답 필드 제한, 빈 문자열 검증 · [FastAPI 레이어드 아키텍처](CS지식/FastAPI_레이어드아키텍처.md) — 관심사 분리, Router·Service·Repository 계층의 책임과 호출 방향, Pydantic 검증 vs Service 검증, mysite4 CRUD 구현 |
 | 2026-10-26 | [FastAPI DB 연동](CS지식/FastAPI_DB연동.md) — 메모리 게시판을 PostgreSQL로 전환(mysite_db). Engine·연결 풀·세션·`DeclarativeBase`, `Mapped`/`mapped_column` 모델, lifespan에서 `create_all`·`engine.dispose`, `get_db()`+`Depends`로 요청마다 세션 주입(의존성 주입), Service의 `with db.begin():` 트랜잭션(자동 commit/rollback), 변경 감지(dirty checking), `from_attributes` 응답 · [SQLAlchemy ORM 기초](CS지식/SQLAlchemy_ORM.md) — `add`/`flush`/`commit`/`rollback`/`refresh`, `get`, `select`+`scalars`/`scalar`와 `.all`/`.first`/`.one`/`.one_or_none`, `where`·`like`·`or_`/`and_`·`order_by`·`limit`, 수정·삭제 |
 | 2026-10-27 | [FastAPI 다대다 관계](CS지식/FastAPI_다대다관계.md) — 게시글–태그 M:N을 연결 테이블(`PostTagMN`)로 표현, `relationship`/`back_populates`, `cascade="all, delete-orphan"`로 연결만 삭제하고 태그는 유지, `UniqueConstraint`로 중복 연결 방지, `association_proxy`+`creator`로 `post.tags.append(tag)`, `IN`으로 기존 태그 일괄 조회·없는 태그만 생성, `EXISTS` 검사 · [SQLAlchemy N+1 문제](CS지식/SQLAlchemy_N+1문제.md) — 지연 로딩이 만드는 1+N 쿼리, `joinedload`(JOIN, 컬렉션엔 `.unique()`) vs `selectinload`(IN), 관계별 선택 기준, 옵션 나열·체이닝, `join()`과 `joinedload()` 차이, 실습 API별 SQL 횟수 비교(26회→2회 등) |
+| 2026-10-28 | [인증과 인가](CS지식/인증과인가.md) — 인증(401) vs 인가(403), HTTP 무상태와 로그인 유지, 쿠키·세션·토큰·JWT는 서로 다른 층위라는 점, 쿠키 속성(`HttpOnly`·`Secure`), JWT 구조(헤더·페이로드·서명)와 Base64URL은 암호화가 아니라는 점, 디코딩 vs 검증, 즉시 무효화가 어려운 단점, Access/Refresh Token, [FastAPI JWT 회원가입과 로그인](CS지식/FastAPI_JWT회원가입로그인.md) — Argon2id 비밀번호 해싱(`pwdlib`)과 `verify()`, `sub`·`iat`·`exp` JWT 발급(PyJWT, HS256), 로그인 실패 응답 통일, 허용 알고리즘 고정·필수 claim 검증, `HTTPBearer`+`Depends` 인증 의존성, 인증 조회와 쓰기 트랜잭션의 DB 세션 분리, [FastAPI 작성자가 있는 게시글](CS지식/FastAPI_작성자게시글.md) — 요청 본문이 아닌 `current_user.id`로 작성자 저장, 401(인증)/403(작성자 인가) 처리 위치, 사용자-게시글 1:N 양방향 관계와 `joinedload` |
 
 ## 목차
 
@@ -203,6 +204,9 @@ AI Agent 엔지니어 부트캠프에서 배운 내용을 정리하는 저장소
 - [FastAPI DB 연동](CS지식/FastAPI_DB연동.md) — PostgreSQL + SQLAlchemy 게시판, Engine·세션·모델, lifespan 테이블 생성, `Depends(get_db)` 의존성 주입, `with db.begin()` 트랜잭션, 변경 감지
 - [SQLAlchemy ORM 기초](CS지식/SQLAlchemy_ORM.md) — 트랜잭션 메서드, `get`/`select`/`scalars`, 결과 추출 메서드, 조건·정렬·제한 조회, 더티 체킹, 삭제
 - [FastAPI 다대다 관계](CS지식/FastAPI_다대다관계.md) — 연결 테이블, cascade·delete-orphan, `UniqueConstraint`, `association_proxy`, 태그 생성·연결·해제와 삭제 범위
+- [인증과 인가](CS지식/인증과인가.md) — 인증 vs 인가, 쿠키·세션·토큰·JWT의 관계, JWT 구조와 보안 주의점, Access/Refresh Token, 로그아웃
+- [FastAPI JWT 회원가입과 로그인](CS지식/FastAPI_JWT회원가입로그인.md) — Argon2id 해싱, JWT 발급·검증, Bearer 인증 의존성, 세션 분리
+- [FastAPI 작성자가 있는 게시글](CS지식/FastAPI_작성자게시글.md) — 작성자 저장, 작성자 본인만 수정·삭제(403), 401/403 구분
 - [SQLAlchemy N+1 문제](CS지식/SQLAlchemy_N+1문제.md) — 지연 로딩 vs 즉시 로딩, `joinedload`/`selectinload` 선택 기준, 체이닝, `join()` vs `joinedload()`, SQL 횟수 실습
 - [RAG 기초](CS지식/RAG_기초.md) — Document Loader, Text Splitter(청크 크기·overlap), 임베딩(`embed_query`/`embed_documents`), 코사인 유사도
 - [벡터 DB](CS지식/벡터DB.md) — ANN(HNSW/IVF), 메타데이터 필터링, Chroma 실습(저장·검색·Retriever), 임베딩 모델 변경 시 재구축 필요성
