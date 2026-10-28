@@ -309,7 +309,7 @@ def get_current_user(
 
 - `HTTPBearer`는 헤더에서 토큰을 추출하고 **Swagger UI에 인증 입력창**을 만든다. 실제 JWT 검증은 `auth_service.get_current_user()`가 호출하는 보안 함수가 한다.
 - `credentials.scheme`은 `"Bearer"`, `credentials.credentials`는 `Bearer ` 접두사를 뺀 **실제 JWT 문자열**이다.
-- `auto_error=False`: 헤더가 없거나 Bearer 형식이 아니면 `credentials`가 `None`이 되어 **직접 401**을 반환할 수 있다. (기본값이면 FastAPI가 403을 반환)
+- `auto_error=False`: 헤더가 없거나 Bearer 형식이 아니면 `credentials`가 `None`이 되어 **직접 401**을 반환할 수 있다.
 - 인증 조회는 **별도 `SessionLocal()`**을 쓴다. 세션이 열려 있는 동안 `UserResponse.model_validate(user)`로 ORM 객체를 Pydantic 모델로 바꾸고 세션을 닫는다.
 - **세션을 분리하는 이유**: 같은 DB 세션에서 인증 조회가 먼저 트랜잭션을 시작하면 Service의 `with db.begin():`과 **충돌**할 수 있기 때문이다. 인증 조회와 쓰기 작업의 세션을 나눈다.
 
